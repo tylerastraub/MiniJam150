@@ -23,7 +23,7 @@ namespace {
             auto& input = ecs.get<InputComponent>(owner);
             auto physics = ecs.get<PhysicsComponent>(owner);
 
-            if(physics.touchingGround) input.allowedInputs = {InputEvent::LEFT, InputEvent::RIGHT, InputEvent::JUMP};
+            if(physics.offGroundCount <= physics.coyoteTime) input.allowedInputs = {InputEvent::LEFT, InputEvent::RIGHT, InputEvent::JUMP};
             else input.allowedInputs = {InputEvent::LEFT, InputEvent::RIGHT};
 
             // state setting
@@ -34,7 +34,7 @@ namespace {
                 dir.direction = Direction::EAST;
             }
 
-            if(!physics.touchingGround) {
+            if(physics.offGroundCount > physics.coyoteTime) {
                 state.state = EntityState::JUMPING;
             }
             else if(physics.velocity.x != 0) {
@@ -64,14 +64,14 @@ namespace prefab {
         physics.maxVelocity = {50.f, 400.f};
         physics.frictionCoefficient = {10.f};
         physics.acceleration = {20.f, 20.f};
-        physics.jumpPower = 250.f;
+        physics.jumpPower = 180.f;
         ecs.emplace<PhysicsComponent>(player, physics);
 
-        ecs.emplace<RenderComponent>(player, RenderComponent{{0, 0, 24, 32}});
+        ecs.emplace<RenderComponent>(player, RenderComponent{{pos.x, pos.y, 24, 32}});
 
         ecs.emplace<InputComponent>(player, InputComponent{{InputEvent::LEFT, InputEvent::RIGHT, InputEvent::JUMP}});
 
-        ecs.emplace<CollisionComponent>(player, CollisionComponent{{pos.x, pos.y, 24, 32}, {0, 0}});
+        ecs.emplace<CollisionComponent>(player, CollisionComponent{{pos.x + 6, pos.y, 12, 32}, {6, 0}});
 
         ecs.emplace<StateComponent>(player, StateComponent{EntityState::IDLE});
 

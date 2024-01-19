@@ -54,7 +54,7 @@ void CollisionSystem::updateLevelCollisionsOnXAxis(entt::registry& ecs, Level le
             if(tileCollisions.size()) {
                 // we have a hit!
                 strb::vec2i tilePos = *tileCollisions.begin();
-                transform.position.x = tilePos.x * ts - collision.collisionRect.w;
+                transform.position.x = tilePos.x * ts - collision.collisionRect.w - collision.collisionRectOffset.x;
                 collision.collisionRect.x = transform.position.x + collision.collisionRectOffset.x;
                 physics.velocity.x = 0;
                 collision.collidingRight = true;
@@ -117,7 +117,7 @@ void CollisionSystem::updateLevelCollisionsOnYAxis(entt::registry& ecs, Level le
             if(tileCollisions.size()) {
                 // we have a hit!
                 strb::vec2i tilePos = *tileCollisions.begin();
-                transform.position.y = tilePos.y * ts - collision.collisionRect.h;
+                transform.position.y = tilePos.y * ts - collision.collisionRect.h - collision.collisionRectOffset.y;
                 collision.collisionRect.y = transform.position.y + collision.collisionRectOffset.y;
                 physics.velocity.y = 0;
                 collision.collidingDown = true;

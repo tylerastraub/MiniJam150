@@ -1,6 +1,14 @@
 #include "CameraSystem.h"
 
-void CameraSystem::update(float timescale) {
+#include "RenderComponent.h"
+
+void CameraSystem::update(entt::registry& ecs, float timescale) {
+    if(_cameraGoal == entt::null) return;
+
+    auto eRender = ecs.get<RenderComponent>(_cameraGoal);
+    _goalCameraOffset = {eRender.renderQuad.x + eRender.renderQuad.w / 2 - _gameSize.x / 2,
+        eRender.renderQuad.y + eRender.renderQuad.h / 2 - _gameSize.y / 2};
+
     float xOffsetDiff = _goalCameraOffset.x - _currentCameraOffset.x;
     float yOffsetDiff = _goalCameraOffset.y - _currentCameraOffset.y;
     
@@ -8,8 +16,12 @@ void CameraSystem::update(float timescale) {
     _currentCameraOffset.y = (0.9f * _currentCameraOffset.y) + (0.1f * _goalCameraOffset.y);
 }
 
-void CameraSystem::setGoalCameraOffset(float x, float y) {
-    _goalCameraOffset = {x, y};
+// void CameraSystem::setGoalCameraOffset(float x, float y) {
+//     _goalCameraOffset = {x, y};
+// }
+
+void CameraSystem::setCameraGoal(entt::entity entity) {
+    _cameraGoal = entity;
 }
 
 void CameraSystem::setCurrentCameraOffset(float x, float y) {
