@@ -34,7 +34,7 @@ namespace {
                 dir.direction = Direction::EAST;
             }
 
-            if(physics.offGroundCount > physics.coyoteTime) {
+            if(!physics.touchingGround) {
                 state.state = EntityState::JUMPING;
             }
             else if(physics.velocity.x != 0) {

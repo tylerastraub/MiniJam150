@@ -12,6 +12,22 @@
 
 std::mt19937 RandomGen::randEng{(unsigned int) std::chrono::system_clock::now().time_since_epoch().count()};
 
+/**
+ * @todo
+ * - Fix level parser
+ *     - Create giant metroidvania style level but rocks/enemies are randomly generated
+ *     - Beacons placed in level manually?
+ * - Add lightmap
+ * - Add mining
+ * - Add basic enemies
+ *     - Big slug (basic, slow, weak enemy)
+ *     - Mimic (fake rock enemy)
+ *     - Jumping enemy (frog?)
+ * - Add level generation (or create base level)
+ * - Add wizard lab
+ * - Add light beacons
+*/
+
 bool GameState::init() {
     initSystems();
 
