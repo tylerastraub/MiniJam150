@@ -165,9 +165,15 @@ void Game::startGameLoop() {
                     _exitFlag = true;
                     break;
                 case SDL_KEYDOWN:
+                    if(e.key.keysym.sym == SDLK_F1) {
+                        _currentState->setDebug(!_currentState->getDebug());
+                    }
+                    else {
+                        _currentState->handleKeyboardInput(e);
+                    }
                 case SDL_KEYUP:
                     if(e.key.keysym.sym == SDLK_ESCAPE) {
-                    _exitFlag = true;
+                        _exitFlag = true;
                     }
                     else {
                         _currentState->handleKeyboardInput(e);

@@ -22,20 +22,17 @@ void InputSystem::update(entt::registry& ecs) {
         if(inputDown(InputEvent::LEFT) &&
            std::find(allowedInputs.begin(), allowedInputs.end(), InputEvent::LEFT) != allowedInputs.end() &&
            inputUp(InputEvent::RIGHT)) {
-            _inputRequested = true;
             physics.velocity.x -= physics.acceleration.x;
         }
         else if(inputDown(InputEvent::RIGHT) &&
                 std::find(allowedInputs.begin(), allowedInputs.end(), InputEvent::RIGHT) != allowedInputs.end() &&
                 inputUp(InputEvent::LEFT)) {
-            _inputRequested = true;
             physics.velocity.x += physics.acceleration.x;
         }
 
         // Y inputs
         if(inputPressed(InputEvent::JUMP) &&
            std::find(allowedInputs.begin(), allowedInputs.end(), InputEvent::JUMP) != allowedInputs.end()) {
-            _inputRequested = true;
             physics.velocity.y = physics.jumpPower * -1.f;
             physics.touchingGround = false;
         }
@@ -43,23 +40,15 @@ void InputSystem::update(entt::registry& ecs) {
         // Other inputs
         if(inputDown(InputEvent::ACTION) &&
            std::find(allowedInputs.begin(), allowedInputs.end(), InputEvent::ACTION) != allowedInputs.end()) {
-            _inputRequested = true;
             auto& mining = ecs.get<MiningComponent>(ent);
             mining.isMining = true;
         }
-        else if(inputUp(InputEvent::ACTION)) {
+        else if(inputReleased(InputEvent::ACTION)) {
             auto& mining = ecs.get<MiningComponent>(ent);
             mining.isMining = false;
+            mining.canMine = true;
         }
     }
-}
-
-void InputSystem::completeInputRequest() {
-    _inputRequested = false;
-}
-
-bool InputSystem::requestsInput() {
-    return _inputRequested;
 }
 
 bool InputSystem::inputDown(InputEvent input) {

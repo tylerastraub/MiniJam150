@@ -156,16 +156,19 @@ void CollisionSystem::checkForMiningCollisions(entt::registry& ecs) {
                 mineralComp.collisionRect.x = mineralTransform.position.x + mineralComp.collisionRectOffset.x;
                 mineralComp.collisionRect.y = mineralTransform.position.y + mineralComp.collisionRectOffset.y;
                 if(RectUtils::isIntersecting(mining.collisionRect, mineralComp.collisionRect)) {
+                    mineralComp.minedBy = entity;
                     mineralComp.minedPercent += mineralComp.mineSpeed;
                     if(mineralComp.minedPercent > 1.f) mineralComp.minedPercent = 1.f;
                 }
-                
+                else {
+                    mineralComp.minedBy = entt::null;
+                }
             }
         }
         else {
             for(auto mineral : minerals) {
                 auto& mineralComp = ecs.get<MineralComponent>(mineral);
-                mineralComp.minedPercent = 0.f;
+                if(mineralComp.minedPercent < 1.f) mineralComp.minedPercent = 0.f;
             }
         }
     }

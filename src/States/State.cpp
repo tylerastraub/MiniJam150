@@ -39,6 +39,10 @@ void State::setInput(std::shared_ptr<Keyboard> keyboard, std::shared_ptr<Mouse> 
     _controller = controller;
 }
 
+void State::setDebug(bool debug) {
+    _debug = debug;
+}
+
 strb::vec2i State::getGameSize() {
     return _gameSize;
 }
@@ -81,4 +85,8 @@ std::shared_ptr<Mouse> State::getMouse() {
 
 std::shared_ptr<Controller> State::getController() {
     return _controller;
+}
+
+bool State::getDebug() {
+    return _debug;
 }

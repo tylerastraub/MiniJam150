@@ -27,9 +27,16 @@ namespace {
             auto physics = ecs.get<PhysicsComponent>(owner);
             auto mining = ecs.get<MiningComponent>(owner);
 
-            if(mining.isMining) input.allowedInputs = {InputEvent::ACTION};
-            else if(physics.offGroundCount <= physics.coyoteTime) input.allowedInputs = {InputEvent::LEFT, InputEvent::RIGHT, InputEvent::JUMP, InputEvent::ACTION};
-            else input.allowedInputs = {InputEvent::LEFT, InputEvent::RIGHT};
+            if(mining.isMining) {
+                input.allowedInputs = {InputEvent::ACTION};
+            }
+            else if(physics.offGroundCount <= physics.coyoteTime) {
+                input.allowedInputs = {InputEvent::LEFT, InputEvent::RIGHT, InputEvent::JUMP};
+                if(mining.canMine) input.allowedInputs.push_back(InputEvent::ACTION);
+            }
+            else {
+                input.allowedInputs = {InputEvent::LEFT, InputEvent::RIGHT};
+            }
 
             // state setting
             if(physics.velocity.x < 0) {

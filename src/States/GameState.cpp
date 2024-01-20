@@ -17,9 +17,7 @@ std::mt19937 RandomGen::randEng{(unsigned int) std::chrono::system_clock::now().
 /**
  * @todo
  * - Finish mining
- *     - Add input stuff where it stops player mining upon completion, but you have to
- *     release mining key to be able to mine again
- *     - Add transformation to ore/gem (can we pick it up or does it auto pick up?)
+ *     - Add ore pickup
  *     - Add cool effect while mining (light, particles, etc.)
  *     - Add to inventory upon mining completed
  * - Add basic enemies
@@ -87,14 +85,15 @@ void GameState::render() {
     _renderSystem.render(getRenderer(), _ecs, _renderOffset);
 
     // debug
-    // auto collision = _ecs.get<CollisionComponent>(_player).collisionRect;
-    // SDL_FRect pRect = {collision.x + _renderOffset.x, collision.y + _renderOffset.y, collision.w, collision.h};
-    // SDL_SetRenderDrawColor(getRenderer(), 0x20, 0xFF, 0x20, 0xAF);
-    // SDL_RenderFillRectF(getRenderer(), &pRect);
-    // collision = _ecs.get<MiningComponent>(_player).collisionRect;
-    // pRect = {collision.x + _renderOffset.x, collision.y + _renderOffset.y, collision.w, collision.h};
-    // SDL_SetRenderDrawColor(getRenderer(), 0xFF, 0x20, 0x20, 0xAF);
-    // SDL_RenderFillRectF(getRenderer(), &pRect);
+    if(_debug) {
+        auto view = _ecs.view<CollisionComponent>();
+        SDL_SetRenderDrawColor(getRenderer(), 0x20, 0xFF, 0x20, 0xAF);
+        for(auto ent : view) {
+            auto collision = _ecs.get<CollisionComponent>(ent).collisionRect;
+            SDL_FRect rect = {collision.x + _renderOffset.x, collision.y + _renderOffset.y, collision.w, collision.h};
+            SDL_RenderFillRectF(getRenderer(), &rect);
+        }
+    }
 
     SDL_RenderPresent(getRenderer());
 }

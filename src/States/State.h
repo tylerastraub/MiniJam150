@@ -45,6 +45,7 @@ public:
     void setSettings(std::shared_ptr<Settings> settings);
     void completeSettingsChange();
     void setInput(std::shared_ptr<Keyboard> keyboard, std::shared_ptr<Mouse> mouse, std::shared_ptr<Controller> controller);
+    void setDebug(bool debug);
     
     strb::vec2i getGameSize();
     State* getNextState();
@@ -57,9 +58,11 @@ public:
     std::shared_ptr<Keyboard> getKeyboard();
     std::shared_ptr<Mouse> getMouse();
     std::shared_ptr<Controller> getController();
+    bool getDebug();
 
 protected:
     bool _settingsChanged = false;
+    bool _debug = false;
 
 private:
     strb::vec2i _gameSize = {0, 0};

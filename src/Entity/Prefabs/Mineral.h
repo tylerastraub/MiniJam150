@@ -1,5 +1,8 @@
+#pragma once
+
 #include "SpritesheetPropertiesComponent.h"
 #include "MineralComponent.h"
+#include "ItemType.h"
 
 #include <entt/entity/registry.hpp>
 

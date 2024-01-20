@@ -1,5 +1,6 @@
 #include "Mineral.h"
 #include "SpritesheetRegistry.h"
+#include "ItemPickup.h"
 // Components
 #include "TransformComponent.h"
 #include "RenderComponent.h"
@@ -7,6 +8,7 @@
 #include "ScriptComponent.h"
 #include "LightComponent.h"
 #include "HueComponent.h"
+#include "MiningComponent.h"
 
 namespace {
     class MineralScript : public IScript {
@@ -26,8 +28,29 @@ namespace {
 
             if(mineral.minedPercent == 1.f) {
                 std::cout << "MINED MINED MINED" << std::endl;
+                if(mineral.minedBy != entt::null) {
+                    auto& miner = ecs.get<MiningComponent>(mineral.minedBy);
+                    miner.canMine = false;
+                    miner.isMining = false;
+                }
+                auto pos = ecs.get<TransformComponent>(owner).position;
+                auto quad = ecs.get<RenderComponent>(owner).renderQuad;
+                prefab::ItemPickup::create(ecs, {pos.x, pos.y - 8}, convertMineralTypeToItemType(mineral.type));
+                ecs.destroy(owner);
             }
         }
+        
+    
+        ItemType convertMineralTypeToItemType(MineralType mineralType) {
+        switch(mineralType) {
+            case MineralType::COBALT:
+                return ItemType::COBALT;
+            default:
+                break;
+        }
+
+        return ItemType::NOVAL;
+    }
 
     private:
 
