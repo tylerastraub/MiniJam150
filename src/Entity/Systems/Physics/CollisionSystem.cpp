@@ -6,6 +6,8 @@
 #include "MiningComponent.h"
 #include "MineralComponent.h"
 #include "DirectionComponent.h"
+#include "PlayerComponent.h"
+#include "ItemPickupComponent.h"
 
 void CollisionSystem::updateLevelCollisionsOnXAxis(entt::registry& ecs, Level level) {
     auto view = ecs.view<TransformComponent, CollisionComponent, PhysicsComponent>();
@@ -169,6 +171,23 @@ void CollisionSystem::checkForMiningCollisions(entt::registry& ecs) {
             for(auto mineral : minerals) {
                 auto& mineralComp = ecs.get<MineralComponent>(mineral);
                 if(mineralComp.minedPercent < 1.f) mineralComp.minedPercent = 0.f;
+            }
+        }
+    }
+}
+
+void CollisionSystem::checkForItemPickupCollisions(entt::registry& ecs, float timescale, std::shared_ptr<Audio> audio) {
+    auto pView = ecs.view<PlayerComponent>();
+    auto pickupView = ecs.view<ItemPickupComponent>();
+    for(auto player : pView) {
+        auto pCollision = ecs.get<CollisionComponent>(player).collisionRect;
+        for(auto item : pickupView) {
+            auto iCollision = ecs.get<CollisionComponent>(item).collisionRect;
+            if(RectUtils::isIntersecting(pCollision, iCollision)) {
+                auto& itemPickupComp = ecs.get<ItemPickupComponent>(item);
+                itemPickupComp.pickedUpBy = player;
+                itemPickupComp.onPickupScript->update(ecs, item, timescale, audio);
+                ecs.destroy(item);
             }
         }
     }

@@ -17,16 +17,21 @@ std::mt19937 RandomGen::randEng{(unsigned int) std::chrono::system_clock::now().
 /**
  * @todo
  * - Finish mining
- *     - Add ore pickup
  *     - Add cool effect while mining (light, particles, etc.)
- *     - Add to inventory upon mining completed
+ * - Add inventory
+ *     - Apply effects to player based on inventory contents
+ *     - Show inventory contents in top left with cute icons
+ * - Add more minerals
  * - Add basic enemies
  *     - Big slug (basic, slow, weak enemy)
  *     - Mimic (fake rock enemy)
  *     - Jumping enemy (frog?)
- * - Add more minerals
+ * - Add health system
+ * - Add torches
+ * - Add light beacons
  * - Create giant metroidvania style level but rocks/enemies are randomly generated
- *     - Add light beacons (placed manually or randomly placed?)
+ *     - Light beacons/torches placed manually
+ * - Add beacon progress bar (or cave light up progress bar)
  * - Add wizard lab
  * - L canceling
 */
@@ -60,6 +65,7 @@ void GameState::tick(float timescale) {
     _collisionSystem.updateLevelCollisionsOnYAxis(_ecs, _level);
 
     _collisionSystem.checkForMiningCollisions(_ecs);
+    _collisionSystem.checkForItemPickupCollisions(_ecs, timescale, getAudioPlayer());
 
     _lightSystem.update(_ecs, _level);
 

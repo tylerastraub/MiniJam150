@@ -1,8 +1,11 @@
 #pragma once
 
-#include <entt/entity/registry.hpp>
 
 #include "Level.h"
+#include "Audio.h"
+
+#include <memory>
+#include <entt/entity/registry.hpp>
 
 class CollisionSystem {
 public:
@@ -13,6 +16,7 @@ public:
     void updateLevelCollisionsOnYAxis(entt::registry& ecs, Level level);
 
     void checkForMiningCollisions(entt::registry& ecs);
+    void checkForItemPickupCollisions(entt::registry& ecs, float timescale, std::shared_ptr<Audio> audio);
 
 private:
 

@@ -13,6 +13,7 @@
 #include "LightComponent.h"
 #include "MiningComponent.h"
 #include "HueComponent.h"
+#include "PlayerComponent.h"
 
 namespace {
     class PlayerScript : public IScript {
@@ -101,6 +102,8 @@ namespace prefab {
         ecs.emplace<MiningComponent>(player, MiningComponent{});
 
         ecs.emplace<HueComponent>(player, HueComponent{});
+
+        ecs.emplace<PlayerComponent>(player, PlayerComponent{});
 
         Light light;
         light.pos = strb::vec2f{render.renderQuad.x + render.renderQuad.w / 2, render.renderQuad.y + render.renderQuad.h / 2} / 16;
