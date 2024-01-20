@@ -5,6 +5,7 @@
 // Prefabs
 #include "DialogueTrigger.h"
 #include "PrefabSpawnTrigger.h"
+#include "Player.h"
 
 #include <algorithm>
 #include <iostream>
@@ -49,8 +50,10 @@ Level LevelParser::parseLevelFromTmx(entt::registry& ecs, std::string filePath, 
                 const auto& objects = objectLayer.getObjects();
                 if(layer->getName() == "objects") {
                     for(const auto& object : objects) {
-                        if(object.getName() == "insert prefab name here") {
-                            // create prefab here
+                        strb::vec2f objectPos = {object.getPosition().x, object.getPosition().y};
+                        if(object.getName() == "player") {
+                            entt::entity player = prefab::Player::create(ecs, objectPos);
+                            level.setPlayerId(player);
                         }
                         // ============================== TRIGGERS ==============================
                         else if(object.getName() == "trigger") {
@@ -123,17 +126,23 @@ Level LevelParser::parseLevelFromTmx(entt::registry& ecs, std::string filePath, 
                     for(const auto& object : objects) {
                         int xPos = object.getPosition().x / level.getTileSize();
                         int yPos = object.getPosition().y / level.getTileSize();
-                        Tile tile = level.getTileAt(xPos, yPos);
-                        if(object.getClass() == "solid") {
-                            tile.type = TileType::SOLID;
+                        int xSpan = object.getAABB().width / level.getTileSize();
+                        int ySpan = object.getAABB().height / level.getTileSize();
+                        for(int x = xPos; x < xPos + xSpan; ++x) {
+                            for(int y = yPos; y < yPos + ySpan; ++y) {
+                                Tile tile = level.getTileAt(x, y);
+                                if(object.getClass() == "solid") {
+                                    tile.type = TileType::SOLID;
+                                }
+                                else if(object.getClass() == "hazard") {
+                                    tile.type = TileType::HAZARD;
+                                }
+                                else if(object.getClass() == "platform") {
+                                    tile.type = TileType::PLATFORM;
+                                }
+                                level.setTileAt(x, y, tile);
+                            }
                         }
-                        else if(object.getClass() == "hazard") {
-                            tile.type = TileType::HAZARD;
-                        }
-                        else if(object.getClass() == "platform") {
-                            tile.type = TileType::PLATFORM;
-                        }
-                        level.setTileAt(xPos, yPos, tile);
                     }
                 }
             }

@@ -5,6 +5,7 @@
 #include "PhysicsComponent.h"
 #include "RenderComponent.h"
 #include "CollisionComponent.h"
+#include "LevelParser.h"
 // Prefabs
 #include "Player.h"
 
@@ -14,8 +15,7 @@ std::mt19937 RandomGen::randEng{(unsigned int) std::chrono::system_clock::now().
 
 /**
  * @todo
- * - Fix level parser
- *     - Create giant metroidvania style level but rocks/enemies are randomly generated
+ * - Create giant metroidvania style level but rocks/enemies are randomly generated
  *     - Beacons placed in level manually?
  * - Add lightmap
  * - Add mining
@@ -26,38 +26,36 @@ std::mt19937 RandomGen::randEng{(unsigned int) std::chrono::system_clock::now().
  * - Add level generation (or create base level)
  * - Add wizard lab
  * - Add light beacons
+ * - L canceling
 */
 
 bool GameState::init() {
     initSystems();
 
-    _player = prefab::Player::create(_ecs, {64, 64});
+    _level = LevelParser::parseLevelFromTmx(_ecs, "res/tiled/test_level.tmx", SpritesheetID::DEFAULT_TILESET);
+    _player = _level.getPlayerId();
+
     auto pRender = _ecs.get<RenderComponent>(_player);
     _cameraSystem.setCurrentCameraOffset(pRender.renderQuad.x + pRender.renderQuad.w / 2 - getGameSize().x / 2,
         pRender.renderQuad.y + pRender.renderQuad.h / 2 - getGameSize().y / 2);
     _cameraSystem.setCameraGoal(_player);
 
-    _level.allocateTilemap(20, 12);
-    _level.setTileset(SpritesheetRegistry::getSpritesheet(SpritesheetID::DEFAULT_TILESET));
-    _level.setPlayerId(_player);
-    _level.setTileSize(16);
-
-    Tile g = {TileType::SOLID, {0, 0, 16, 16}};
-    Tile e = {TileType::NOVAL, {0, 0, 0, 0}};
-    _level.setTilemap({
-        {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e},
-        {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e},
-        {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e},
-        {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e},
-        {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e},
-        {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e},
-        {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, g, g, e, e, e},
-        {e, e, e, e, e, e, e, e, e, e, e, e, e, g, g, g, g, e, e, e},
-        {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e},
-        {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e},
-        {g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g},
-        {g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g}
-    });
+    // Tile g = {TileType::SOLID, {0, 0, 16, 16}};
+    // Tile e = {TileType::NOVAL, {0, 0, 0, 0}};
+    // _level.setTilemap({
+    //     {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e},
+    //     {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e},
+    //     {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e},
+    //     {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e},
+    //     {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e},
+    //     {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e},
+    //     {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, g, g, e, e, e},
+    //     {e, e, e, e, e, e, e, e, e, e, e, e, e, g, g, g, g, e, e, e},
+    //     {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e},
+    //     {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e},
+    //     {g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g},
+    //     {g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g}
+    // });
 
     return true;
 }
