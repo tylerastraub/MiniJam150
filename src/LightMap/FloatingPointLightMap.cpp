@@ -16,22 +16,10 @@ void FloatingPointLightMap::allocate(int width, int depth) {
     }
 }
 
-/**
- * @brief Adds a light source to the LightMap
- * 
- * @param pos Position of the light
- * @param brightness Brightness of the light, where 0 is pitch black and 1 is full brightness
- * @param falloff How fast the light fades out. A brightness of 0.2 means each subsequent tile is 20% dimmer
- * @return uint16_t The light ID (used to remove the light, which is necessary for dynamic/moving lights)
- */
-uint16_t FloatingPointLightMap::addLightSource(strb::vec2f pos, float brightness, Hue hue, float falloff) {
-    Light light;
+uint16_t FloatingPointLightMap::addLightSource(Light light) {
     light.id = _currentLightId;
     ++_currentLightId;
-    light.pos = pos;
-    light.brightness = brightness;
-    light.falloff = falloff;
-    light.hue = hue;
+    if(_currentLightId == SDL_MAX_UINT16) _currentLightId = 0;
     _lightSources.push_back(light);
     updateLightMap(light);
 
@@ -73,6 +61,13 @@ int FloatingPointLightMap::getBrightness(strb::vec2f pos) {
     if(light.first < 0) return 0;
     else if(light.first > 255) return 255;
     return light.first;
+}
+
+bool FloatingPointLightMap::hasLight(uint16_t lightId) {
+    for(auto light : _lightSources) {
+        if(light.id == lightId) return true;
+    }
+    return false;
 }
 
 bool FloatingPointLightMap::isLightInBounds(strb::vec2f pos) {

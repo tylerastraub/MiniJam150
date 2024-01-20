@@ -6,30 +6,8 @@
 #include <vector>
 #include <cstdint>
 
-/**
- * Common hue colors:
- * - Soft warm: {0xfe, 0xd8, 0x92}
- * - Bright warm: {0xff, 0xf5, 0x91}
- * - Cool: {0x9f, 0xed, 0xd7}
- * - Neutral, slightly dull: {0xe7, 0xdf, 0xc0}
- */
-struct Hue {
-    uint8_t red = 0xFF;
-    uint8_t green = 0xFF;
-    uint8_t blue = 0xFF;
-};
-
-struct Light {
-    uint16_t id;
-    // The light's absolute position
-    strb::vec2f pos = {0.f, 0.f};
-    // The light's brightness from a scale of 0-1
-    float brightness = 0.f;
-    // The rate at which the light falls off the further it gets from the source (from 0-1). Default is 0.2
-    float falloff = 0.2f;
-
-    Hue hue;
-};
+#include "Hue.h"
+#include "Light.h"
 
 /**
  * @brief 2D lightmap used for creating static lighting map.
@@ -42,11 +20,13 @@ public:
 
     void allocate(int width, int depth);
 
-    uint16_t addLightSource(strb::vec2f pos, float brightness, Hue hue, float falloff = 0.2f);
+    uint16_t addLightSource(Light light);
     void removeLightSource(uint16_t lightId);
 
     Hue getHue(strb::vec2f pos);
     int getBrightness(strb::vec2f pos);
+
+    bool hasLight(uint16_t lightId);
 
 private:
     bool isLightInBounds(strb::vec2f pos);

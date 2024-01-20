@@ -15,30 +15,25 @@ std::mt19937 RandomGen::randEng{(unsigned int) std::chrono::system_clock::now().
 
 /**
  * @todo
- * - Create giant metroidvania style level but rocks/enemies are randomly generated
- *     - Beacons placed in level manually?
- * - Add lightmap
  * - Add mining
  * - Add basic enemies
  *     - Big slug (basic, slow, weak enemy)
  *     - Mimic (fake rock enemy)
  *     - Jumping enemy (frog?)
- * - Add level generation (or create base level)
+ * - Create giant metroidvania style level but rocks/enemies are randomly generated
+ *     - Add light beacons (placed manually or randomly placed?)
  * - Add wizard lab
- * - Add light beacons
  * - L canceling
 */
 
 bool GameState::init() {
-    initSystems();
-
     _level = LevelParser::parseLevelFromTmx(_ecs, "res/tiled/test_level.tmx", SpritesheetID::DEFAULT_TILESET);
     _player = _level.getPlayerId();
     _lMap = std::make_shared<FloatingPointLightMap>();
     _lMap->allocate(_level.getTilemapWidth(), _level.getTilemapHeight());
-    auto pRenderQuad = _ecs.get<RenderComponent>(_player).renderQuad;
-    _playerLight = _lMap->addLightSource(strb::vec2f{pRenderQuad.x + pRenderQuad.w / 2, pRenderQuad.y + pRenderQuad.h / 2} / _level.getTileSize(), 1.f, {0x9f, 0xed, 0xd7}, 0.1f);
     _level.setLightMap(_lMap);
+
+    initSystems();
 
     auto pRender = _ecs.get<RenderComponent>(_player);
     _cameraSystem.setCurrentCameraOffset(pRender.renderQuad.x + pRender.renderQuad.w / 2 - getGameSize().x / 2,
@@ -59,6 +54,8 @@ void GameState::tick(float timescale) {
     _physicsSystem.updateY(_ecs, timescale);
     _collisionSystem.updateLevelCollisionsOnYAxis(_ecs, _level);
 
+    _lightSystem.update(_ecs, _level);
+
     _cameraSystem.update(_ecs, timescale);
     _renderOffset = _cameraSystem.getCurrentCameraOffset();
 
@@ -66,12 +63,6 @@ void GameState::tick(float timescale) {
 
     auto pTransform = _ecs.get<TransformComponent>(_player);
     auto pPhysics = _ecs.get<PhysicsComponent>(_player);
-
-    if(pTransform.lastPosition != pTransform.position) {
-        auto pRenderQuad = _ecs.get<RenderComponent>(_player).renderQuad;
-        _lMap->removeLightSource(_playerLight);
-        _playerLight = _lMap->addLightSource(strb::vec2f{pRenderQuad.x + pRenderQuad.w / 2, pRenderQuad.y + pRenderQuad.h / 2} / _level.getTileSize(), 1.f, {0x9f, 0xed, 0xd7}, 0.1f);
-    }
 
     // Input updates
     getKeyboard()->updateInputs();
@@ -114,4 +105,6 @@ void GameState::initSystems() {
     
     _cameraSystem.setGameSize(getGameSize().x, getGameSize().y);
     _cameraSystem.setLevelSize(_level.getTilemapWidth() * _level.getTileSize(), _level.getTilemapHeight() * _level.getTileSize());
+
+    _lightSystem.updateLightSources(_ecs, _level);
 }

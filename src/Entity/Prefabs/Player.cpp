@@ -10,6 +10,7 @@
 #include "DirectionComponent.h"
 #include "ScriptComponent.h"
 #include "AnimationComponent.h"
+#include "LightComponent.h"
 
 namespace {
     class PlayerScript : public IScript {
@@ -67,7 +68,9 @@ namespace prefab {
         physics.jumpPower = 180.f;
         ecs.emplace<PhysicsComponent>(player, physics);
 
-        ecs.emplace<RenderComponent>(player, RenderComponent{{pos.x, pos.y, 24, 32}});
+        RenderComponent render;
+        render.renderQuad = {pos.x, pos.y, 24, 32};
+        ecs.emplace<RenderComponent>(player, render);
 
         ecs.emplace<InputComponent>(player, InputComponent{{InputEvent::LEFT, InputEvent::RIGHT, InputEvent::JUMP}});
 
@@ -80,6 +83,13 @@ namespace prefab {
         ecs.emplace<ScriptComponent>(player, ScriptComponent{std::make_shared<PlayerScript>()});
 
         ecs.emplace<AnimationComponent>(player, AnimationComponent{});
+
+        Light light;
+        light.pos = strb::vec2f{render.renderQuad.x + render.renderQuad.w / 2, render.renderQuad.y + render.renderQuad.h / 2} / 16;
+        light.brightness = 1.f;
+        light.hue = HuePreset::cool;
+        light.falloff = 0.1f;
+        ecs.emplace<LightComponent>(player, LightComponent{light});
 
         SpritesheetPropertiesComponent propsComp = createSpritesheetPropertiesComponent(SpritesheetRegistry::getSpritesheet(SpritesheetID::PLAYER));
         ecs.emplace<SpritesheetPropertiesComponent>(player, propsComp);
