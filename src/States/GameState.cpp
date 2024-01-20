@@ -17,10 +17,11 @@ std::mt19937 RandomGen::randEng{(unsigned int) std::chrono::system_clock::now().
 /**
  * @todo
  * - Finish mining
+ *     - Add input stuff where it stops player mining upon completion, but you have to
+ *     release mining key to be able to mine again
  *     - Add transformation to ore/gem (can we pick it up or does it auto pick up?)
  *     - Add cool effect while mining (light, particles, etc.)
  *     - Add to inventory upon mining completed
- * - Entity lighting
  * - Add basic enemies
  *     - Big slug (basic, slow, weak enemy)
  *     - Mimic (fake rock enemy)

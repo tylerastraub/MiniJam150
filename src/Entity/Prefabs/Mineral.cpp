@@ -6,6 +6,7 @@
 #include "CollisionComponent.h"
 #include "ScriptComponent.h"
 #include "LightComponent.h"
+#include "HueComponent.h"
 
 namespace {
     class MineralScript : public IScript {
@@ -50,6 +51,8 @@ namespace prefab {
         ecs.emplace<ScriptComponent>(mineral, ScriptComponent{std::make_shared<MineralScript>()});
 
         ecs.emplace<MineralComponent>(mineral, MineralComponent{mineralType, {0.f, 0.f, 16.f, 16.f}, {0.f, 0.f}, getMineralMineSpeed(mineralType)});
+        
+        ecs.emplace<HueComponent>(mineral, HueComponent{});
 
         // Light light;
         // light.pos = strb::vec2f{render.renderQuad.x + render.renderQuad.w / 2, render.renderQuad.y + render.renderQuad.h / 2} / 16;

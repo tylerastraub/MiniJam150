@@ -42,6 +42,27 @@ void FloatingPointLightMap::removeLightSource(uint16_t lightId) {
     std::cout << "Error: attempting to remove nonexistent light source. ID: " << lightId << std::endl;
 }
 
+Hue FloatingPointLightMap::calculateEntityHue(strb::vec2f pos) {
+    if(!isLightInBounds(pos)) return {0x00, 0x00, 0x00};
+    int red = 0;
+    int green = 0;
+    int blue = 0;
+    for(auto light : _lightSources) {
+        float maxDistance = 1.f / light.falloff;
+        float distance = std::hypot(light.pos.x - pos.x, light.pos.y - pos.y);
+        if(distance >= maxDistance) continue;
+        float lightStrength = (maxDistance - distance) / maxDistance;
+        red += light.hue.red * lightStrength;
+        green += light.hue.green * lightStrength;
+        blue += light.hue.blue * lightStrength;
+    }
+    if(red > 255) red = 255;
+    if(green > 255) green = 255;
+    if(blue > 255) blue = 255;
+
+    return Hue{static_cast<uint8_t>(red), static_cast<uint8_t>(green), static_cast<uint8_t>(blue)};
+}
+
 Hue FloatingPointLightMap::getHue(strb::vec2f pos) {
     // bounds check
     if(!isLightInBounds(pos)) return Hue();

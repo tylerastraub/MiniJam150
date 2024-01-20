@@ -23,6 +23,8 @@ public:
     uint16_t addLightSource(Light light);
     void removeLightSource(uint16_t lightId);
 
+    Hue calculateEntityHue(strb::vec2f pos);
+
     Hue getHue(strb::vec2f pos);
     int getBrightness(strb::vec2f pos);
 

@@ -5,6 +5,7 @@
 #include "DirectionComponent.h"
 #include "StateComponent.h"
 #include "AnimationComponent.h"
+#include "HueComponent.h"
 #include "rect2.h"
 
 void RenderSystem::update(entt::registry& ecs, float timescale) {
@@ -72,6 +73,10 @@ void RenderSystem::render(SDL_Renderer* renderer, entt::registry& ecs, strb::vec
                 else {
                     propsComponent.spritesheet->setTileIndex(props.xTileIndex, props.yTileIndex);
                 }
+                if(ecs.all_of<HueComponent>(ent)) {
+                    auto eHue = ecs.get<HueComponent>(ent).hue;
+                    SDL_SetTextureColorMod(propsComponent.spritesheet->getTexture(), eHue.red, eHue.green, eHue.blue);
+                }
                 propsComponent.spritesheet->render(
                     quad.x,
                     quad.y,
@@ -95,6 +100,10 @@ void RenderSystem::render(SDL_Renderer* renderer, entt::registry& ecs, strb::vec
                 }
                 else {
                     propsComponent.spritesheet->setTileIndex(props.xTileIndex, props.yTileIndex);
+                }
+                if(ecs.all_of<HueComponent>(ent)) {
+                    auto eHue = ecs.get<HueComponent>(ent).hue;
+                    SDL_SetTextureColorMod(propsComponent.spritesheet->getTexture(), eHue.red, eHue.green, eHue.blue);
                 }
                 propsComponent.spritesheet->render(
                     quad.x,
