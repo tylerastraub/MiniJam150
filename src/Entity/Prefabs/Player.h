@@ -1,3 +1,5 @@
+#pragma once
+
 #include "SpritesheetPropertiesComponent.h"
 
 #include <entt/entity/registry.hpp>

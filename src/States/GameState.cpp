@@ -5,6 +5,7 @@
 #include "PhysicsComponent.h"
 #include "RenderComponent.h"
 #include "CollisionComponent.h"
+#include "MiningComponent.h"
 #include "LevelParser.h"
 // Prefabs
 #include "Player.h"
@@ -15,11 +16,16 @@ std::mt19937 RandomGen::randEng{(unsigned int) std::chrono::system_clock::now().
 
 /**
  * @todo
- * - Add mining
+ * - Finish mining
+ *     - Add transformation to ore/gem (can we pick it up or does it auto pick up?)
+ *     - Add cool effect while mining (light, particles, etc.)
+ *     - Add to inventory upon mining completed
+ * - Entity lighting
  * - Add basic enemies
  *     - Big slug (basic, slow, weak enemy)
  *     - Mimic (fake rock enemy)
  *     - Jumping enemy (frog?)
+ * - Add more minerals
  * - Create giant metroidvania style level but rocks/enemies are randomly generated
  *     - Add light beacons (placed manually or randomly placed?)
  * - Add wizard lab
@@ -54,6 +60,8 @@ void GameState::tick(float timescale) {
     _physicsSystem.updateY(_ecs, timescale);
     _collisionSystem.updateLevelCollisionsOnYAxis(_ecs, _level);
 
+    _collisionSystem.checkForMiningCollisions(_ecs);
+
     _lightSystem.update(_ecs, _level);
 
     _cameraSystem.update(_ecs, timescale);
@@ -81,6 +89,10 @@ void GameState::render() {
     // auto collision = _ecs.get<CollisionComponent>(_player).collisionRect;
     // SDL_FRect pRect = {collision.x + _renderOffset.x, collision.y + _renderOffset.y, collision.w, collision.h};
     // SDL_SetRenderDrawColor(getRenderer(), 0x20, 0xFF, 0x20, 0xAF);
+    // SDL_RenderFillRectF(getRenderer(), &pRect);
+    // collision = _ecs.get<MiningComponent>(_player).collisionRect;
+    // pRect = {collision.x + _renderOffset.x, collision.y + _renderOffset.y, collision.w, collision.h};
+    // SDL_SetRenderDrawColor(getRenderer(), 0xFF, 0x20, 0x20, 0xAF);
     // SDL_RenderFillRectF(getRenderer(), &pRect);
 
     SDL_RenderPresent(getRenderer());

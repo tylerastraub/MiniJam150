@@ -5,6 +5,7 @@ enum class EntityState {
     IDLE,
     MOVING,
     JUMPING,
+    MINING,
 };
 
 struct StateComponent {

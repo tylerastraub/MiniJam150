@@ -51,9 +51,14 @@ Level LevelParser::parseLevelFromTmx(entt::registry& ecs, std::string filePath, 
                 if(layer->getName() == "objects") {
                     for(const auto& object : objects) {
                         strb::vec2f objectPos = {object.getPosition().x, object.getPosition().y};
+                        // ============================== PREFABS ==============================
                         if(object.getName() == "player") {
                             entt::entity player = prefab::Player::create(ecs, objectPos);
                             level.setPlayerId(player);
+                        }
+                        else if(object.getName() == "mineral") {
+                            MineralType mineralType = convertStringToMineralType(object.getClass());
+                            prefab::Mineral::create(ecs, objectPos, mineralType);
                         }
                         // ============================== TRIGGERS ==============================
                         else if(object.getName() == "trigger") {
@@ -187,6 +192,15 @@ PrefabType LevelParser::convertStringToPrefabType(std::string prefabTypeString) 
     }
     else if(prefabTypeString == "PROJECTILE") {
         result = PrefabType::PROJECTILE;
+    }
+
+    return result;
+}
+
+MineralType LevelParser::convertStringToMineralType(std::string mineralTypeString) {
+    MineralType result = MineralType::NOVAL;
+    if(mineralTypeString == "COBALT") {
+        result = MineralType::COBALT;
     }
 
     return result;

@@ -139,6 +139,7 @@ bool Game::loadResources() {
     if(!SpritesheetRegistry::addSpritesheet(_renderer, SpritesheetID::DIALOGUE_BOX, "res/spritesheet/dialogue_box.png", 320, 32)) return false;
     if(!SpritesheetRegistry::addSpritesheet(_renderer, SpritesheetID::DEFAULT_TILESET, "res/spritesheet/tileset.png", 16, 16)) return false;
     if(!SpritesheetRegistry::addSpritesheet(_renderer, SpritesheetID::PLAYER, "res/spritesheet/player.png", 24, 32)) return false;
+    if(!SpritesheetRegistry::addSpritesheet(_renderer, SpritesheetID::MINERALS, "res/spritesheet/minerals.png", 16, 16)) return false;
 
     // Audio
     _audioPlayer = std::make_shared<Audio>();

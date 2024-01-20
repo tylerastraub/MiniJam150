@@ -5,4 +5,5 @@ enum class SpritesheetID {
     DIALOGUE_BOX,
     DEFAULT_TILESET,
     PLAYER,
+    MINERALS,
 };

@@ -12,6 +12,8 @@ public:
     void updateLevelCollisionsOnXAxis(entt::registry& ecs, Level level);
     void updateLevelCollisionsOnYAxis(entt::registry& ecs, Level level);
 
+    void checkForMiningCollisions(entt::registry& ecs);
+
 private:
 
 };

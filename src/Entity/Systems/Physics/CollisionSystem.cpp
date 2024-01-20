@@ -1,7 +1,11 @@
 #include "CollisionSystem.h"
+#include "RectUtils.h"
 #include "TransformComponent.h"
 #include "PhysicsComponent.h"
 #include "CollisionComponent.h"
+#include "MiningComponent.h"
+#include "MineralComponent.h"
+#include "DirectionComponent.h"
 
 void CollisionSystem::updateLevelCollisionsOnXAxis(entt::registry& ecs, Level level) {
     auto view = ecs.view<TransformComponent, CollisionComponent, PhysicsComponent>();
@@ -126,6 +130,42 @@ void CollisionSystem::updateLevelCollisionsOnYAxis(entt::registry& ecs, Level le
             else {
                 collision.collidingDown = false;
                 physics.touchingGround = false;
+            }
+        }
+    }
+}
+
+void CollisionSystem::checkForMiningCollisions(entt::registry& ecs) {
+    auto view = ecs.view<TransformComponent, MiningComponent, DirectionComponent, CollisionComponent>();
+    auto minerals = ecs.view<MineralComponent>();
+    for(auto entity : view) {
+        auto& mining = ecs.get<MiningComponent>(entity);
+        auto dir = ecs.get<DirectionComponent>(entity);
+        auto collision = ecs.get<CollisionComponent>(entity);
+        if(dir.direction == Direction::EAST) {
+            mining.collisionRect.x = collision.collisionRect.x + collision.collisionRect.w;
+        }
+        else if(dir.direction == Direction::WEST) {
+            mining.collisionRect.x = collision.collisionRect.x - mining.collisionRect.w;
+        }
+        mining.collisionRect.y = collision.collisionRect.y;
+        if(mining.isMining) {
+            for(auto mineral : minerals) {
+                auto mineralTransform = ecs.get<TransformComponent>(mineral);
+                auto& mineralComp = ecs.get<MineralComponent>(mineral);
+                mineralComp.collisionRect.x = mineralTransform.position.x + mineralComp.collisionRectOffset.x;
+                mineralComp.collisionRect.y = mineralTransform.position.y + mineralComp.collisionRectOffset.y;
+                if(RectUtils::isIntersecting(mining.collisionRect, mineralComp.collisionRect)) {
+                    mineralComp.minedPercent += mineralComp.mineSpeed;
+                    if(mineralComp.minedPercent > 1.f) mineralComp.minedPercent = 1.f;
+                }
+                
+            }
+        }
+        else {
+            for(auto mineral : minerals) {
+                auto& mineralComp = ecs.get<MineralComponent>(mineral);
+                mineralComp.minedPercent = 0.f;
             }
         }
     }

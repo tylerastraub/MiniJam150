@@ -11,6 +11,7 @@
 #include "ScriptComponent.h"
 #include "AnimationComponent.h"
 #include "LightComponent.h"
+#include "MiningComponent.h"
 
 namespace {
     class PlayerScript : public IScript {
@@ -23,8 +24,10 @@ namespace {
             auto& dir = ecs.get<DirectionComponent>(owner);
             auto& input = ecs.get<InputComponent>(owner);
             auto physics = ecs.get<PhysicsComponent>(owner);
+            auto mining = ecs.get<MiningComponent>(owner);
 
-            if(physics.offGroundCount <= physics.coyoteTime) input.allowedInputs = {InputEvent::LEFT, InputEvent::RIGHT, InputEvent::JUMP};
+            if(mining.isMining) input.allowedInputs = {InputEvent::ACTION};
+            else if(physics.offGroundCount <= physics.coyoteTime) input.allowedInputs = {InputEvent::LEFT, InputEvent::RIGHT, InputEvent::JUMP, InputEvent::ACTION};
             else input.allowedInputs = {InputEvent::LEFT, InputEvent::RIGHT};
 
             // state setting
@@ -40,6 +43,9 @@ namespace {
             }
             else if(physics.velocity.x != 0) {
                 state.state = EntityState::MOVING;
+            }
+            else if(mining.isMining) {
+                state.state = EntityState::MINING;
             }
             else {
                 state.state = EntityState::IDLE;
@@ -72,7 +78,7 @@ namespace prefab {
         render.renderQuad = {pos.x, pos.y, 24, 32};
         ecs.emplace<RenderComponent>(player, render);
 
-        ecs.emplace<InputComponent>(player, InputComponent{{InputEvent::LEFT, InputEvent::RIGHT, InputEvent::JUMP}});
+        ecs.emplace<InputComponent>(player, InputComponent{{InputEvent::LEFT, InputEvent::RIGHT, InputEvent::JUMP, InputEvent::ACTION}});
 
         ecs.emplace<CollisionComponent>(player, CollisionComponent{{pos.x + 6, pos.y, 12, 32}, {6, 0}});
 
@@ -83,6 +89,8 @@ namespace prefab {
         ecs.emplace<ScriptComponent>(player, ScriptComponent{std::make_shared<PlayerScript>()});
 
         ecs.emplace<AnimationComponent>(player, AnimationComponent{});
+
+        ecs.emplace<MiningComponent>(player, MiningComponent{});
 
         Light light;
         light.pos = strb::vec2f{render.renderQuad.x + render.renderQuad.w / 2, render.renderQuad.y + render.renderQuad.h / 2} / 16;
@@ -178,6 +186,32 @@ namespace prefab {
             {-1.f, -1.f}            // center
         };
         propsComp.addSpritesheetProperties(EntityState::JUMPING, Direction::WEST, jumpingWest);
+
+        SpritesheetProperties miningEast = {
+            0,                      // xTileIndex
+            3,                      // yTileIndex
+            false,                  // isAnimated
+            false,                  // isLooped
+            1,                      // numOfFrames
+            1,                      // msBetweenFrames
+            SDL_FLIP_NONE,          // flip
+            0.0,                    // angle
+            {-1.f, -1.f}            // center
+        };
+        propsComp.addSpritesheetProperties(EntityState::MINING, Direction::EAST, miningEast);
+
+        SpritesheetProperties miningWest = {
+            0,                      // xTileIndex
+            3,                      // yTileIndex
+            false,                  // isAnimated
+            false,                  // isLooped
+            1,                      // numOfFrames
+            1,                      // msBetweenFrames
+            SDL_FLIP_HORIZONTAL,    // flip
+            0.0,                    // angle
+            {-1.f, -1.f}            // center
+        };
+        propsComp.addSpritesheetProperties(EntityState::MINING, Direction::WEST, miningWest);
 
         return propsComp;
     }

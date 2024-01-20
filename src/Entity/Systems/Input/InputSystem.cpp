@@ -1,6 +1,7 @@
 #include "InputSystem.h"
 #include "InputComponent.h"
 #include "PhysicsComponent.h"
+#include "MiningComponent.h"
 
 #include <algorithm>
 
@@ -19,12 +20,14 @@ void InputSystem::update(entt::registry& ecs) {
 
         // X inputs
         if(inputDown(InputEvent::LEFT) &&
-           std::find(allowedInputs.begin(), allowedInputs.end(), InputEvent::LEFT) != allowedInputs.end()) {
+           std::find(allowedInputs.begin(), allowedInputs.end(), InputEvent::LEFT) != allowedInputs.end() &&
+           inputUp(InputEvent::RIGHT)) {
             _inputRequested = true;
             physics.velocity.x -= physics.acceleration.x;
         }
         else if(inputDown(InputEvent::RIGHT) &&
-           std::find(allowedInputs.begin(), allowedInputs.end(), InputEvent::RIGHT) != allowedInputs.end()) {
+                std::find(allowedInputs.begin(), allowedInputs.end(), InputEvent::RIGHT) != allowedInputs.end() &&
+                inputUp(InputEvent::LEFT)) {
             _inputRequested = true;
             physics.velocity.x += physics.acceleration.x;
         }
@@ -35,6 +38,18 @@ void InputSystem::update(entt::registry& ecs) {
             _inputRequested = true;
             physics.velocity.y = physics.jumpPower * -1.f;
             physics.touchingGround = false;
+        }
+
+        // Other inputs
+        if(inputDown(InputEvent::ACTION) &&
+           std::find(allowedInputs.begin(), allowedInputs.end(), InputEvent::ACTION) != allowedInputs.end()) {
+            _inputRequested = true;
+            auto& mining = ecs.get<MiningComponent>(ent);
+            mining.isMining = true;
+        }
+        else if(inputUp(InputEvent::ACTION)) {
+            auto& mining = ecs.get<MiningComponent>(ent);
+            mining.isMining = false;
         }
     }
 }

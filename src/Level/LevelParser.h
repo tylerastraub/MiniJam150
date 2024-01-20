@@ -4,6 +4,7 @@
 #include "Level.h"
 #include "SpritesheetID.h"
 #include "PrefabType.h"
+#include "Mineral.h"
 
 #include <vector>
 #include <string>
@@ -17,5 +18,6 @@ public:
 
 private:
     static PrefabType convertStringToPrefabType(std::string prefabTypeString);
+    static MineralType convertStringToMineralType(std::string mineralTypeString);
 
 };
