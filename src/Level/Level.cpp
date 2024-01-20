@@ -32,6 +32,14 @@ void Level::render(strb::vec2f renderOffset) {
             // in future, these properties could be added to tile struct
             _tileset->setIsAnimated(false);
 
+            if(_lMap) {
+                Hue hue = _lMap->getHue({static_cast<float>(x), static_cast<float>(y)});
+                SDL_SetTextureColorMod(_tileset->getTexture(), hue.red, hue.green, hue.blue);
+            }
+            else {
+                SDL_SetTextureColorMod(_tileset->getTexture(), 0xFF, 0xFF, 0xFF);
+            }
+
             _tileset->render(x * _tileSize + renderOffset.x, y * _tileSize + renderOffset.y, t.spritesheetRect.w, t.spritesheetRect.h);
         }
     }
@@ -45,7 +53,7 @@ void Level::setTilemap(std::vector<std::vector<Tile>> tilemap) {
     }
 }
 
-void Level::setLightMap(std::shared_ptr<LightMap> lMap) {
+void Level::setLightMap(std::shared_ptr<FloatingPointLightMap> lMap) {
     _lMap = lMap;
 }
 
@@ -90,6 +98,6 @@ entt::entity Level::getPlayerId() {
     return _playerId;
 }
 
-LightMap* Level::getLightMap() {
-    return _lMap.get();
+std::shared_ptr<FloatingPointLightMap> Level::getLightMap() {
+    return _lMap;
 }

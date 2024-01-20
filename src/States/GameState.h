@@ -5,6 +5,7 @@
 #include "Mouse.h"
 #include "Controller.h"
 #include "Level.h"
+#include "FloatingPointLightMap.h"
 // Systems
 #include "InputSystem.h"
 #include "RenderSystem.h"
@@ -37,8 +38,10 @@ private:
     entt::registry _ecs;
 
     Level _level;
+    std::shared_ptr<FloatingPointLightMap> _lMap = nullptr;
 
     entt::entity _player;
+    uint16_t _playerLight;
 
     InputSystem _inputSystem;
     RenderSystem _renderSystem;

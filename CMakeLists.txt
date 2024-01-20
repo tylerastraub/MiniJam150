@@ -75,6 +75,7 @@ set(SOURCES
     ${PROJECT_SOURCE_DIR}/src/Entity/Systems/Physics/CollisionSystem.cpp
     ${PROJECT_SOURCE_DIR}/src/Entity/Systems/Physics/PhysicsSystem.cpp
     ${PROJECT_SOURCE_DIR}/src/Entity/Systems/Render/CameraSystem.cpp
+    ${PROJECT_SOURCE_DIR}/src/Entity/Systems/Render/LightSystem.cpp
     ${PROJECT_SOURCE_DIR}/src/Entity/Systems/Render/RenderSystem.cpp
     ${PROJECT_SOURCE_DIR}/src/GUI/BlankElement.cpp
     ${PROJECT_SOURCE_DIR}/src/GUI/Button.cpp

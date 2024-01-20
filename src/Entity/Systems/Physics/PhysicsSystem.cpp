@@ -12,7 +12,7 @@ bool PhysicsSystem::updateX(entt::registry& ecs, float timescale) {
         auto& physics = ecs.get<PhysicsComponent>(ent);
         auto& transform = ecs.get<TransformComponent>(ent);
 
-        transform.lastPosition = transform.position;
+        transform.lastPosition.x = transform.position.x;
         if(physics.velocity.x != 0.f) {
             entityMoved = true;
             transform.position.x += physics.velocity.x * timescale;
@@ -32,7 +32,7 @@ bool PhysicsSystem::updateY(entt::registry& ecs, float timescale) {
         auto& physics = ecs.get<PhysicsComponent>(ent);
         auto& transform = ecs.get<TransformComponent>(ent);
 
-        transform.lastPosition = transform.position;
+        transform.lastPosition.y = transform.position.y;
         physics.velocity.y += physics.gravity;
         if(physics.velocity.y != 0.f) {
             entityMoved = true;

@@ -34,28 +34,16 @@ bool GameState::init() {
 
     _level = LevelParser::parseLevelFromTmx(_ecs, "res/tiled/test_level.tmx", SpritesheetID::DEFAULT_TILESET);
     _player = _level.getPlayerId();
+    _lMap = std::make_shared<FloatingPointLightMap>();
+    _lMap->allocate(_level.getTilemapWidth(), _level.getTilemapHeight());
+    auto pRenderQuad = _ecs.get<RenderComponent>(_player).renderQuad;
+    _playerLight = _lMap->addLightSource(strb::vec2f{pRenderQuad.x + pRenderQuad.w / 2, pRenderQuad.y + pRenderQuad.h / 2} / _level.getTileSize(), 1.f, {0x9f, 0xed, 0xd7}, 0.1f);
+    _level.setLightMap(_lMap);
 
     auto pRender = _ecs.get<RenderComponent>(_player);
     _cameraSystem.setCurrentCameraOffset(pRender.renderQuad.x + pRender.renderQuad.w / 2 - getGameSize().x / 2,
         pRender.renderQuad.y + pRender.renderQuad.h / 2 - getGameSize().y / 2);
     _cameraSystem.setCameraGoal(_player);
-
-    // Tile g = {TileType::SOLID, {0, 0, 16, 16}};
-    // Tile e = {TileType::NOVAL, {0, 0, 0, 0}};
-    // _level.setTilemap({
-    //     {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e},
-    //     {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e},
-    //     {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e},
-    //     {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e},
-    //     {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e},
-    //     {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e},
-    //     {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, g, g, e, e, e},
-    //     {e, e, e, e, e, e, e, e, e, e, e, e, e, g, g, g, g, e, e, e},
-    //     {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e},
-    //     {e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e},
-    //     {g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g},
-    //     {g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g, g}
-    // });
 
     return true;
 }
@@ -79,13 +67,19 @@ void GameState::tick(float timescale) {
     auto pTransform = _ecs.get<TransformComponent>(_player);
     auto pPhysics = _ecs.get<PhysicsComponent>(_player);
 
+    if(pTransform.lastPosition != pTransform.position) {
+        auto pRenderQuad = _ecs.get<RenderComponent>(_player).renderQuad;
+        _lMap->removeLightSource(_playerLight);
+        _playerLight = _lMap->addLightSource(strb::vec2f{pRenderQuad.x + pRenderQuad.w / 2, pRenderQuad.y + pRenderQuad.h / 2} / _level.getTileSize(), 1.f, {0x9f, 0xed, 0xd7}, 0.1f);
+    }
+
     // Input updates
     getKeyboard()->updateInputs();
     getController()->updateInputs();
 }
 
 void GameState::render() {
-    SDL_SetRenderDrawColor(getRenderer(), 0x10, 0x10, 0x10, 0xFF);
+    SDL_SetRenderDrawColor(getRenderer(), 0x00, 0x00, 0x00, 0xFF);
     SDL_RenderClear(getRenderer());
 
     _level.render(_renderOffset);
