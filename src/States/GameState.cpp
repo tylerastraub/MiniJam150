@@ -7,6 +7,9 @@
 #include "CollisionComponent.h"
 #include "MiningComponent.h"
 #include "LevelParser.h"
+#include "PlayerComponent.h"
+#include "HealthComponent.h"
+#include "LightComponent.h"
 // Prefabs
 #include "Player.h"
 
@@ -17,17 +20,17 @@ std::mt19937 RandomGen::randEng{(unsigned int) std::chrono::system_clock::now().
 /**
  * @todo
  * ==== ESSENTIALS ====
- * - Add health system and makes enemies hurt you
+ * - Add light beacons
  * - Create giant metroidvania style level but rocks/enemies are randomly generated
  *     - Light beacons/torches placed manually
- * - Add beacon progress bar (or cave light up progress bar)
+ * - Add beacon progress notification
  * - Add sounds
- * - Add light beacons
  * 
  * ==== NICE TO HAVES ====
  * - Add basic enemies
  *     - Jumping enemy (frog?)
  *     - Mimic (fake rock enemy)
+ * - Add text to LevelParser
  * - Make enemies avoid light (so that torches have more reason to be lit up)
  * - Add controls indicator on screen (down arrow key appears when next to torch/beacon)
  * - Add rose quartz and emerald mineral
@@ -68,6 +71,7 @@ void GameState::tick(float timescale) {
     _collisionSystem.checkForMiningCollisions(_ecs);
     _collisionSystem.checkForItemPickupCollisions(_ecs, timescale, getAudioPlayer());
     _collisionSystem.checkForTorchAndBeaconCollisions(_ecs);
+    _collisionSystem.checkForPlayerAndEnemyCollisions(_ecs, timescale, getAudioPlayer());
 
     _lightSystem.update(_ecs, _level);
     _inventorySystem.update(_ecs);
@@ -77,8 +81,7 @@ void GameState::tick(float timescale) {
 
     _renderSystem.update(_ecs, timescale);
 
-    auto pTransform = _ecs.get<TransformComponent>(_player);
-    auto pPhysics = _ecs.get<PhysicsComponent>(_player);
+    respawnUpdate();
 
     // Input updates
     getKeyboard()->updateInputs();
@@ -94,6 +97,23 @@ void GameState::render() {
     _renderSystem.render(getRenderer(), _ecs, _renderOffset);
 
     _inventorySystem.render(_ecs, getText(TextSize::TINY));
+
+    // respawn text
+    int playerHealth = _ecs.get<HealthComponent>(_player).health;
+    if(playerHealth <= 0) {
+        std::shared_ptr<Text> smallText = getText(TextSize::SMALL);
+        smallText->setString("Press '" + getSettings()->getStringKeyboardControlForInputEvent(InputEvent::RESPAWN) + "' to respawn");
+        smallText->render(getGameSize().x / 2 - smallText->getWidth() / 2 + 1, getGameSize().y / 2 - smallText->getHeight() / 2 + 1, 0, 0, 0);
+        smallText->render(getGameSize().x / 2 - smallText->getWidth() / 2, getGameSize().y / 2 - smallText->getHeight() / 2);
+    }
+    
+    // health bar
+    Spritesheet* heart = SpritesheetRegistry::getSpritesheet(SpritesheetID::HEART);
+    for(int i = 0; i < 3; ++i) {
+        int ySpritesheetIndex = (i < playerHealth) ? 1 : 0;
+        heart->setTileIndex(0, ySpritesheetIndex);
+        heart->render(getGameSize().x - (heart->getWidth() + 2) * (3 - i), 2, 16, 16);
+    }
 
     // debug
     if(_debug) {
@@ -130,4 +150,18 @@ void GameState::initSystems() {
     _cameraSystem.setLevelSize(_level.getTilemapWidth() * _level.getTileSize(), _level.getTilemapHeight() * _level.getTileSize());
 
     _lightSystem.updateLightSources(_ecs, _level);
+}
+
+void GameState::respawnUpdate() {
+    auto& playerComp = _ecs.get<PlayerComponent>(_player);
+    if(playerComp.requestsRespawn) {
+        playerComp.requestsRespawn = false;
+        auto& health = _ecs.get<HealthComponent>(_player);
+        if(health.health <= 0) {
+            health.health = 3;
+            auto& transform = _ecs.get<TransformComponent>(_player);
+            transform.position = _level.getPlayerSpawn();
+            _lightSystem.update(_ecs, _level);
+        }
+    }
 }

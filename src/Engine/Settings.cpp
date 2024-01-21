@@ -57,12 +57,14 @@ void Settings::saveSettings() {
         "RIGHT=" + _displayStringMap[InputEvent::RIGHT].first,
         "JUMP=" + _displayStringMap[InputEvent::JUMP].first,
         "ACTION=" + _displayStringMap[InputEvent::ACTION].first,
+        "RESPAWN=" + _displayStringMap[InputEvent::RESPAWN].first,
         "",
         "# ========== GAMEPAD CONTROLS CONFIG ==========",
         "",
         "# Note that bindings follow the standard XBox controller layout, although there is support for the PS4/PS5 touchbad button.",
         "JUMP=" + _displayStringMap[InputEvent::JUMP].second,
         "ACTION=" + _displayStringMap[InputEvent::ACTION].second,
+        "RESPAWN=" + _displayStringMap[InputEvent::RESPAWN].second,
         "",
         "# ========== LIST OF ALL KEY BINDINGS ==========",
         "",
@@ -188,6 +190,9 @@ InputEvent Settings::convertStringToInputEvent(std::string s) {
     }
     else if(s == "ACTION") {
         return InputEvent::ACTION;
+    }
+    else if(s == "RESPAWN") {
+        return InputEvent::RESPAWN;
     }
 
     return InputEvent::NOVAL;

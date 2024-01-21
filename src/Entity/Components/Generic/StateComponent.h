@@ -6,6 +6,7 @@ enum class EntityState {
     MOVING,
     JUMPING,
     MINING,
+    HURT,
 };
 
 struct StateComponent {

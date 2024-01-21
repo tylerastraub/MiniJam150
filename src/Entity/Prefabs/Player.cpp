@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "SpritesheetRegistry.h"
 #include "ParticleEffect.h"
+#include "ItemPickup.h"
 // Components
 #include "TransformComponent.h"
 #include "PhysicsComponent.h"
@@ -17,6 +18,7 @@
 #include "PlayerComponent.h"
 #include "InventoryComponent.h"
 #include "PowerupComponent.h"
+#include "HealthComponent.h"
 
 namespace {
     class PlayerScript : public IScript {
@@ -30,8 +32,31 @@ namespace {
             auto& input = ecs.get<InputComponent>(owner);
             auto physics = ecs.get<PhysicsComponent>(owner);
             auto mining = ecs.get<MiningComponent>(owner);
+            auto& health = ecs.get<HealthComponent>(owner);
 
-            if(mining.isMining) {
+            health.currentInvulnTimer += timescale * 1000.f;
+
+            if(health.health == 0) {
+                health.health = -1;
+                input.allowedInputs = {InputEvent::RESPAWN};
+                auto& inventory = ecs.get<InventoryComponent>(owner);
+                auto quad = ecs.get<RenderComponent>(owner).renderQuad;
+                for(const auto [itemType, value] : inventory.inventory) {
+                    for(size_t i = 0; i < value; ++i) {
+                        prefab::ItemPickup::create(ecs, {quad.x + quad.w / 2, quad.y + quad.h / 2}, itemType);
+                    }
+                    inventory.inventory[itemType] = 0;
+                }
+            }
+            else if(health.health == -1) {
+                input.allowedInputs = {InputEvent::RESPAWN};
+                return;
+            }
+
+            if(health.currentInvulnTimer < health.hitstunTime) {
+                input.allowedInputs = {};
+            }
+            else if(mining.isMining) {
                 input.allowedInputs = {InputEvent::ACTION};
                 if(_miningParticle == entt::null && mining.mineral != entt::null) {
                     auto mineralPos = ecs.get<TransformComponent>(mining.mineral).position;
@@ -53,13 +78,18 @@ namespace {
 
             // state setting
             if(physics.velocity.x < 0) {
-                dir.direction = Direction::WEST;
+                if(state.state == EntityState::HURT) dir.direction = Direction::EAST;
+                else dir.direction = Direction::WEST;
             }
             else if(physics.velocity.x > 0) {
-                dir.direction = Direction::EAST;
+                if(state.state == EntityState::HURT) dir.direction = Direction::WEST;
+                else dir.direction = Direction::EAST;
             }
 
-            if(!physics.touchingGround) {
+            if(health.currentInvulnTimer < health.hitstunTime) {
+                state.state = EntityState::HURT;
+            }
+            else if(!physics.touchingGround) {
                 state.state = EntityState::JUMPING;
             }
             else if(physics.velocity.x != 0) {
@@ -91,7 +121,8 @@ namespace prefab {
 
         PhysicsComponent physics;
         physics.maxVelocity = {50.f, 400.f};
-        physics.frictionCoefficient = {10.f};
+        physics.frictionCoefficient = 10.f;
+        physics.airFrictionCoefficient = 0.1f;
         physics.acceleration = {20.f, 20.f};
         physics.jumpPower = 180.f;
         ecs.emplace<PhysicsComponent>(player, physics);
@@ -120,6 +151,8 @@ namespace prefab {
         ecs.emplace<PlayerComponent>(player, PlayerComponent{});
 
         ecs.emplace<PowerupComponent>(player, PowerupComponent{});
+
+        ecs.emplace<HealthComponent>(player, HealthComponent{});
 
         InventoryComponent inventory;
         inventory.inventory[ItemType::TOPAZ] = 0;
@@ -249,6 +282,32 @@ namespace prefab {
             {-1.f, -1.f}            // center
         };
         propsComp.addSpritesheetProperties(EntityState::MINING, Direction::WEST, miningWest);
+
+        SpritesheetProperties hurtEast = {
+            0,                      // xTileIndex
+            4,                      // yTileIndex
+            false,                  // isAnimated
+            false,                  // isLooped
+            1,                      // numOfFrames
+            1,                      // msBetweenFrames
+            SDL_FLIP_NONE,          // flip
+            0.0,                    // angle
+            {-1.f, -1.f}            // center
+        };
+        propsComp.addSpritesheetProperties(EntityState::HURT, Direction::EAST, hurtEast);
+
+        SpritesheetProperties hurtWest = {
+            0,                      // xTileIndex
+            4,                      // yTileIndex
+            false,                  // isAnimated
+            false,                  // isLooped
+            1,                      // numOfFrames
+            1,                      // msBetweenFrames
+            SDL_FLIP_HORIZONTAL,    // flip
+            0.0,                    // angle
+            {-1.f, -1.f}            // center
+        };
+        propsComp.addSpritesheetProperties(EntityState::HURT, Direction::WEST, hurtWest);
 
         return propsComp;
     }

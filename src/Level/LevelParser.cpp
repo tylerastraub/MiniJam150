@@ -58,6 +58,7 @@ Level LevelParser::parseLevelFromTmx(entt::registry& ecs, std::string filePath, 
                         if(object.getName() == "player") {
                             entt::entity player = prefab::Player::create(ecs, objectPos);
                             level.setPlayerId(player);
+                            level.setPlayerSpawn(objectPos);
                         }
                         else if(object.getName() == "mineral") {
                             ItemType mineralType = convertStringToItemType(object.getClass());

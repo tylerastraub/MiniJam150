@@ -41,6 +41,7 @@ namespace prefab {
 
         RenderComponent render;
         render.renderQuad = {pos.x, pos.y, 16, 16};
+        render.renderPriority = 2;
         ecs.emplace<RenderComponent>(item, render);
         
         ecs.emplace<HueComponent>(item, HueComponent{});

@@ -3,6 +3,7 @@
 #include "PhysicsComponent.h"
 #include "MiningComponent.h"
 #include "PlayerComponent.h"
+#include "HealthComponent.h"
 
 #include <algorithm>
 
@@ -49,10 +50,17 @@ void InputSystem::update(entt::registry& ecs) {
             mining.isMining = false;
             mining.canMine = true;
         }
+
         if(inputPressed(InputEvent::DOWN) &&
            std::find(allowedInputs.begin(), allowedInputs.end(), InputEvent::DOWN) != allowedInputs.end()) {
             auto& player = ecs.get<PlayerComponent>(ent);
             player.requestsLight = true;
+        }
+
+        if(inputPressed(InputEvent::RESPAWN) &&
+           std::find(allowedInputs.begin(), allowedInputs.end(), InputEvent::RESPAWN) != allowedInputs.end()) {
+            auto& player = ecs.get<PlayerComponent>(ent);
+            player.requestsRespawn = true;
         }
     }
 }

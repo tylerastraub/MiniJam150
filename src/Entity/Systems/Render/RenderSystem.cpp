@@ -6,6 +6,7 @@
 #include "StateComponent.h"
 #include "AnimationComponent.h"
 #include "HueComponent.h"
+#include "HealthComponent.h"
 #include "rect2.h"
 
 void RenderSystem::update(entt::registry& ecs, float timescale) {
@@ -24,6 +25,15 @@ void RenderSystem::render(SDL_Renderer* renderer, entt::registry& ecs, strb::vec
     entities.use<RenderComponent>();
     SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0xFF, 0xFF);
     for(auto ent : entities) {
+        if(ecs.all_of<HealthComponent>(ent)) {
+            auto health = ecs.get<HealthComponent>(ent);
+            if(health.currentInvulnTimer < health.invulnTime && health.currentInvulnTimer % 3 != 0) {
+                continue;
+            }
+            else if(health.health <= 0) {
+                continue;
+            }
+        }
         auto& renderComponent = ecs.get<RenderComponent>(ent);
         auto& transform = ecs.get<TransformComponent>(ent);
         renderComponent.renderQuad.x = transform.position.x + renderComponent.renderQuadOffset.x;

@@ -10,6 +10,8 @@
 #include "ItemPickupComponent.h"
 #include "TorchComponent.h"
 #include "InventoryComponent.h"
+#include "HealthComponent.h"
+#include "EnemyComponent.h"
 
 void CollisionSystem::updateLevelCollisionsOnXAxis(entt::registry& ecs, Level level) {
     auto view = ecs.view<TransformComponent, CollisionComponent, PhysicsComponent>();
@@ -186,6 +188,8 @@ void CollisionSystem::checkForItemPickupCollisions(entt::registry& ecs, float ti
     auto pView = ecs.view<PlayerComponent>();
     auto pickupView = ecs.view<ItemPickupComponent>();
     for(auto player : pView) {
+        auto& health = ecs.get<HealthComponent>(player);
+        if(health.health <= 0) return;
         auto pCollision = ecs.get<CollisionComponent>(player).collisionRect;
         for(auto item : pickupView) {
             auto iCollision = ecs.get<CollisionComponent>(item).collisionRect;
@@ -201,6 +205,8 @@ void CollisionSystem::checkForItemPickupCollisions(entt::registry& ecs, float ti
 
 void CollisionSystem::checkForTorchAndBeaconCollisions(entt::registry& ecs) {
     entt::entity player = *ecs.view<PlayerComponent>().begin();
+    auto& health = ecs.get<HealthComponent>(player);
+    if(health.health <= 0) return;
     auto& playerComp = ecs.get<PlayerComponent>(player);
     if(playerComp.requestsLight) {
         playerComp.requestsLight = false;
@@ -221,6 +227,27 @@ void CollisionSystem::checkForTorchAndBeaconCollisions(entt::registry& ecs) {
                     torchComp.isLit = true;
                     return;
                 }
+            }
+        }
+    }
+}
+
+void CollisionSystem::checkForPlayerAndEnemyCollisions(entt::registry& ecs, float timescale, std::shared_ptr<Audio> audio) {
+    entt::entity player = *ecs.view<PlayerComponent, CollisionComponent, HealthComponent>().begin();
+    auto& health = ecs.get<HealthComponent>(player);
+    if(health.currentInvulnTimer >= health.invulnTime && health.health > 0) {
+        auto enemyView = ecs.view<EnemyComponent, CollisionComponent>();
+        auto pCollision = ecs.get<CollisionComponent>(player).collisionRect;
+        for(auto enemy : enemyView) {
+            auto eCollision = ecs.get<CollisionComponent>(enemy).collisionRect;
+            if(RectUtils::isIntersecting(pCollision, eCollision)) {
+                health.health--;
+                health.currentInvulnTimer = 0;
+                auto pPos = ecs.get<TransformComponent>(player).position;
+                auto ePos = ecs.get<TransformComponent>(enemy).position;
+                auto& physics = ecs.get<PhysicsComponent>(player);
+                float coefficient = (pPos.x - ePos.x < 0.f) ? -1.f : 1.f;
+                physics.velocity = {120.f * coefficient, -80.f};
             }
         }
     }

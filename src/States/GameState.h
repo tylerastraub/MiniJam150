@@ -35,6 +35,8 @@ public:
     void initSystems();
 
 private:
+    void respawnUpdate();
+
     strb::vec2f _renderOffset = {0.f, 0.f};
 
     entt::registry _ecs;

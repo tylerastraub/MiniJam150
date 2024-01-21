@@ -8,4 +8,5 @@ enum class InputEvent {
     RIGHT,
     JUMP,
     ACTION,
+    RESPAWN,
 };

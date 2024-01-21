@@ -23,6 +23,7 @@ public:
     void setTileAt(int x, int y, Tile tile);
     void setTileset(Spritesheet* tileset);
     void setPlayerId(entt::entity player);
+    void setPlayerSpawn(strb::vec2f spawn);
 
     Tile getTileAt(int x, int y);
     int getTileSize();
@@ -30,6 +31,7 @@ public:
     int getTilemapHeight();
     entt::entity getPlayerId();
     std::shared_ptr<FloatingPointLightMap> getLightMap();
+    strb::vec2f getPlayerSpawn();
 
 private:
     std::shared_ptr<FloatingPointLightMap> _lMap = nullptr;
@@ -40,5 +42,6 @@ private:
     Spritesheet* _tileset = nullptr;
 
     entt::entity _playerId;
+    strb::vec2f _playerSpawn = {-1.f, -1.f};
 
 };

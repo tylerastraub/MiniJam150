@@ -12,6 +12,7 @@
 #include "AnimationComponent.h"
 #include "LightComponent.h"
 #include "HueComponent.h"
+#include "EnemyComponent.h"
 
 namespace {
     class SlugScript : public IScript {
@@ -85,7 +86,7 @@ namespace prefab {
         render.renderQuad = {pos.x, pos.y, 36, 20};
         ecs.emplace<RenderComponent>(slug, render);
 
-        ecs.emplace<CollisionComponent>(slug, CollisionComponent{{pos.x + 2, pos.y, 32, 18}, {2, 2}});
+        ecs.emplace<CollisionComponent>(slug, CollisionComponent{{pos.x + 2, pos.y, 32, 10}, {2, 10}});
 
         ecs.emplace<StateComponent>(slug, StateComponent{EntityState::IDLE});
 
@@ -96,6 +97,8 @@ namespace prefab {
         ecs.emplace<AnimationComponent>(slug, AnimationComponent{});
 
         ecs.emplace<HueComponent>(slug, HueComponent{});
+
+        ecs.emplace<EnemyComponent>(slug, EnemyComponent{});
 
         // Light light;
         // light.pos = strb::vec2f{render.renderQuad.x + render.renderQuad.w / 2, render.renderQuad.y + render.renderQuad.h / 2} / 16;

@@ -10,4 +10,5 @@ enum class SpritesheetID {
     INVENTORY_ICONS,
     SLUG,
     TORCH,
+    HEART,
 };

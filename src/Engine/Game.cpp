@@ -144,6 +144,7 @@ bool Game::loadResources() {
     if(!SpritesheetRegistry::addSpritesheet(_renderer, SpritesheetID::INVENTORY_ICONS, "res/spritesheet/inventory_icons.png", 16, 16)) return false;
     if(!SpritesheetRegistry::addSpritesheet(_renderer, SpritesheetID::SLUG, "res/spritesheet/slug.png", 36, 20)) return false;
     if(!SpritesheetRegistry::addSpritesheet(_renderer, SpritesheetID::TORCH, "res/spritesheet/torch.png", 16, 48)) return false;
+    if(!SpritesheetRegistry::addSpritesheet(_renderer, SpritesheetID::HEART, "res/spritesheet/heart.png", 16, 16)) return false;
 
     // Audio
     _audioPlayer = std::make_shared<Audio>();
