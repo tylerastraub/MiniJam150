@@ -7,6 +7,7 @@
 #include "PrefabSpawnTrigger.h"
 #include "Player.h"
 #include "Mineral.h"
+#include "Slug.h"
 
 #include <algorithm>
 #include <iostream>
@@ -60,6 +61,9 @@ Level LevelParser::parseLevelFromTmx(entt::registry& ecs, std::string filePath, 
                         else if(object.getName() == "mineral") {
                             ItemType mineralType = convertStringToItemType(object.getClass());
                             prefab::Mineral::create(ecs, objectPos, mineralType);
+                        }
+                        else if(object.getName() == "slug") {
+                            prefab::Slug::create(ecs, objectPos);
                         }
                         // ============================== TRIGGERS ==============================
                         else if(object.getName() == "trigger") {

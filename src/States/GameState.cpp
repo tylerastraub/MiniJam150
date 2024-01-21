@@ -17,11 +17,10 @@ std::mt19937 RandomGen::randEng{(unsigned int) std::chrono::system_clock::now().
 /**
  * @todo
  * === 1/20/24 ===
+ * - Add health system and makes enemies hurt you
  * - Add basic enemies
- *     - Big slug (basic, slow, weak enemy)
- *     - Mimic (fake rock enemy)
  *     - Jumping enemy (frog?)
- * - Add health system
+ *     - Mimic (fake rock enemy)
  * - Add torches
  * - Add light beacons
  * - Add rose quartz mineral

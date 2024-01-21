@@ -8,4 +8,5 @@ enum class SpritesheetID {
     MINERALS,
     MINING_MAGIC,
     INVENTORY_ICONS,
+    SLUG,
 };

@@ -40,6 +40,8 @@ set(SOURCE_INCLUDES
     ${PROJECT_SOURCE_DIR}/src/Entity/Components/Specialized
     ${PROJECT_SOURCE_DIR}/src/Entity/Components/Trigger
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs
+    ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Enemies
+    ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Items
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Triggers
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/TypeEnums
     ${PROJECT_SOURCE_DIR}/src/Entity/Systems/Generic
@@ -69,10 +71,11 @@ set(SOURCES
     ${PROJECT_SOURCE_DIR}/src/Engine/RandomUtilities/RDSObject.cpp
     ${PROJECT_SOURCE_DIR}/src/Engine/RandomUtilities/RDSTable.cpp
     ${PROJECT_SOURCE_DIR}/src/Entity/Components/Render/SpritesheetPropertiesComponent.cpp
-    ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/ItemPickup.cpp
-    ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Mineral.cpp
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/ParticleEffect.cpp
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Player.cpp
+    ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Enemies/Slug.cpp
+    ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Items/ItemPickup.cpp
+    ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Items/Mineral.cpp
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Triggers/DialogueTrigger.cpp
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Triggers/PrefabSpawnTrigger.cpp
     ${PROJECT_SOURCE_DIR}/src/Entity/Systems/Generic/InventorySystem.cpp
