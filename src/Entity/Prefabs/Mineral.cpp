@@ -19,6 +19,7 @@ namespace {
         void update(entt::registry& ecs, entt::entity owner, float timescale, std::shared_ptr<Audio> audio) override {
             auto& mineral = ecs.get<MineralComponent>(owner);
             auto& propsComp = ecs.get<SpritesheetPropertiesComponent>(owner);
+            auto& lightComp = ecs.get<LightComponent>(owner);
 
             // spritesheet setting
             SpritesheetProperties props = propsComp.getPrimarySpritesheetProperties();
@@ -26,8 +27,14 @@ namespace {
             props.yTileIndex = mineral.getMineralSpritesheetYIndex();
             propsComp.setPrimarySpritesheetProperties(props);
 
+            if(mineral.minedBy != entt::null) {
+                lightComp.light.brightness = 0.6f;
+            }
+            else {
+                lightComp.light.brightness = 0.f;
+            }
+
             if(mineral.minedPercent == 1.f) {
-                std::cout << "MINED MINED MINED" << std::endl;
                 if(mineral.minedBy != entt::null) {
                     auto& miner = ecs.get<MiningComponent>(mineral.minedBy);
                     miner.canMine = false;
@@ -77,12 +84,13 @@ namespace prefab {
         
         ecs.emplace<HueComponent>(mineral, HueComponent{});
 
-        // Light light;
-        // light.pos = strb::vec2f{render.renderQuad.x + render.renderQuad.w / 2, render.renderQuad.y + render.renderQuad.h / 2} / 16;
-        // light.brightness = 1.f;
-        // light.hue = HuePreset::cool;
-        // light.falloff = 0.1f;
-        // ecs.emplace<LightComponent>(mineral, LightComponent{light});
+        Light light;
+        light.pos = strb::vec2f{render.renderQuad.x + render.renderQuad.w / 2, render.renderQuad.y + render.renderQuad.h / 2} / 16;
+        light.brightness = 0.f;
+        light.hue = getMineralHue(mineralType);
+        light.falloff = 0.2f;
+        light.owner = mineral;
+        ecs.emplace<LightComponent>(mineral, LightComponent{light});
 
         SpritesheetPropertiesComponent propsComp = createSpritesheetPropertiesComponent(SpritesheetRegistry::getSpritesheet(SpritesheetID::MINERALS));
         ecs.emplace<SpritesheetPropertiesComponent>(mineral, propsComp);
@@ -118,5 +126,15 @@ namespace prefab {
                 break;
         }
         return 0.f;
+    }
+
+    Hue Mineral::getMineralHue(MineralType mineralType) {
+        switch(mineralType) {
+            case MineralType::COBALT:
+                return HuePreset::cobalt;
+            default:
+                break;
+        }
+        return {0x00, 0x00, 0x00};
     }
 }

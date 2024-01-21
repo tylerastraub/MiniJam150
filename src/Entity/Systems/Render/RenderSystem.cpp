@@ -14,10 +14,14 @@ void RenderSystem::update(entt::registry& ecs, float timescale) {
         auto& animationComponent = ecs.get<AnimationComponent>(ent);
         animationComponent.msSinceAnimationStart += timescale * 1000.f;
     }
+    ecs.sort<RenderComponent>([](const RenderComponent lhs, const RenderComponent rhs){
+        return lhs.renderPriority < rhs.renderPriority;
+    });
 }
 
 void RenderSystem::render(SDL_Renderer* renderer, entt::registry& ecs, strb::vec2f renderOffset) {
     auto entities = ecs.view<RenderComponent, TransformComponent>();
+    entities.use<RenderComponent>();
     SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0xFF, 0xFF);
     for(auto ent : entities) {
         auto& renderComponent = ecs.get<RenderComponent>(ent);
@@ -61,6 +65,7 @@ void RenderSystem::render(SDL_Renderer* renderer, entt::registry& ecs, strb::vec
                         animationComponent.xIndex = animationComponent.msSinceAnimationStart / props.msBetweenFrames;
                         if(animationComponent.xIndex >= props.numOfFrames) animationComponent.xIndex = props.numOfFrames - 1;
                     }
+                    props.xTileIndex = animationComponent.xIndex;
                     propsComponent.spritesheet->setTileIndex(animationComponent.xIndex, props.yTileIndex);
                     animationComponent.lastState = state.state;
                     if(ecs.all_of<StateComponent>(ent) &&
@@ -96,7 +101,17 @@ void RenderSystem::render(SDL_Renderer* renderer, entt::registry& ecs, strb::vec
                 propsComponent.spritesheet->setMsBetweenFrames(props.msBetweenFrames);
                 propsComponent.spritesheet->setNumOfFrames(props.numOfFrames);
                 if(props.isAnimated) {
-                    propsComponent.spritesheet->setTileIndex(propsComponent.spritesheet->getTileIndex().x, props.yTileIndex);
+                    auto& animationComponent = ecs.get<AnimationComponent>(ent);
+                    if(props.isLooped) {
+                        animationComponent.xIndex = animationComponent.msSinceAnimationStart / props.msBetweenFrames % props.numOfFrames;
+                    }
+                    else {
+                        animationComponent.xIndex = animationComponent.msSinceAnimationStart / props.msBetweenFrames;
+                        if(animationComponent.xIndex >= props.numOfFrames) animationComponent.xIndex = props.numOfFrames - 1;
+                    }
+                    propsComponent.spritesheet->setTileIndex(animationComponent.xIndex, props.yTileIndex);
+                    props.xTileIndex = animationComponent.xIndex;
+                    propsComponent.setPrimarySpritesheetProperties(props);
                 }
                 else {
                     propsComponent.spritesheet->setTileIndex(props.xTileIndex, props.yTileIndex);

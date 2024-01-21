@@ -16,8 +16,7 @@ std::mt19937 RandomGen::randEng{(unsigned int) std::chrono::system_clock::now().
 
 /**
  * @todo
- * - Finish mining
- *     - Add cool effect while mining (light, particles, etc.)
+ * === 1/20/24 ===
  * - Add inventory
  *     - Apply effects to player based on inventory contents
  *     - Show inventory contents in top left with cute icons
@@ -29,10 +28,14 @@ std::mt19937 RandomGen::randEng{(unsigned int) std::chrono::system_clock::now().
  * - Add health system
  * - Add torches
  * - Add light beacons
+ * === 1/21/24 ===
  * - Create giant metroidvania style level but rocks/enemies are randomly generated
  *     - Light beacons/torches placed manually
  * - Add beacon progress bar (or cave light up progress bar)
+ * - Add sounds
  * - Add wizard lab
+ * - Add music
+ * - Add more extra art :)
  * - L canceling
 */
 

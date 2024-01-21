@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "SpritesheetRegistry.h"
+#include "ParticleEffect.h"
 // Components
 #include "TransformComponent.h"
 #include "PhysicsComponent.h"
@@ -30,6 +31,10 @@ namespace {
 
             if(mining.isMining) {
                 input.allowedInputs = {InputEvent::ACTION};
+                if(_miningParticle == entt::null && mining.mineral != entt::null) {
+                    auto mineralPos = ecs.get<TransformComponent>(mining.mineral).position;
+                    _miningParticle = prefab::ParticleEffect::create(ecs, mineralPos, ParticleType::MINING_MAGIC);
+                }
             }
             else if(physics.offGroundCount <= physics.coyoteTime) {
                 input.allowedInputs = {InputEvent::LEFT, InputEvent::RIGHT, InputEvent::JUMP};
@@ -37,6 +42,11 @@ namespace {
             }
             else {
                 input.allowedInputs = {InputEvent::LEFT, InputEvent::RIGHT};
+            }
+
+            if(!mining.isMining && _miningParticle != entt::null) {
+                ecs.destroy(_miningParticle);
+                _miningParticle = entt::null;
             }
 
             // state setting
@@ -62,6 +72,7 @@ namespace {
         }
 
     private:
+        entt::entity _miningParticle = entt::null;
 
     };
 }
@@ -110,6 +121,7 @@ namespace prefab {
         light.brightness = 1.f;
         light.hue = HuePreset::cool;
         light.falloff = 0.1f;
+        light.owner = player;
         ecs.emplace<LightComponent>(player, LightComponent{light});
 
         SpritesheetPropertiesComponent propsComp = createSpritesheetPropertiesComponent(SpritesheetRegistry::getSpritesheet(SpritesheetID::PLAYER));

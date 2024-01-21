@@ -6,4 +6,5 @@ enum class SpritesheetID {
     DEFAULT_TILESET,
     PLAYER,
     MINERALS,
+    MINING_MAGIC,
 };

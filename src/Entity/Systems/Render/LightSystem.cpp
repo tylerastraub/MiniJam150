@@ -5,15 +5,18 @@
 
 void LightSystem::update(entt::registry& ecs, Level& level) {
     auto view = ecs.view<LightComponent, TransformComponent>();
+    level.getLightMap()->cleanUpLightSources(ecs);
     // update dynamic lights
     for(auto entity : view) {
         auto transform = ecs.get<TransformComponent>(entity);
-        if(transform.position != transform.lastPosition) {
-            auto& lightComp = ecs.get<LightComponent>(entity);
+        auto& lightComp = ecs.get<LightComponent>(entity);
+        if(transform.position != transform.lastPosition ||
+           lightComp.light.brightness != lightComp.light.lastBrightness) {
             if(level.getLightMap()->hasLight(lightComp.light.id)) removeLightSource(level, lightComp.light);
             lightComp.light.pos += (transform.position - transform.lastPosition) / level.getTileSize();
             lightComp.light.id = addLightSource(level, lightComp.light);
         }
+        lightComp.light.lastBrightness = lightComp.light.brightness;
     }
     // update entity hues
     auto hueView = ecs.view<HueComponent>();

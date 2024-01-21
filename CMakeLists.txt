@@ -41,6 +41,7 @@ set(SOURCE_INCLUDES
     ${PROJECT_SOURCE_DIR}/src/Entity/Components/Trigger
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Triggers
+    ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/TypeEnums
     ${PROJECT_SOURCE_DIR}/src/Entity/Systems/Generic
     ${PROJECT_SOURCE_DIR}/src/Entity/Systems/Input
     ${PROJECT_SOURCE_DIR}/src/Entity/Systems/Physics
@@ -70,6 +71,7 @@ set(SOURCES
     ${PROJECT_SOURCE_DIR}/src/Entity/Components/Render/SpritesheetPropertiesComponent.cpp
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/ItemPickup.cpp
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Mineral.cpp
+    ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/ParticleEffect.cpp
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Player.cpp
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Triggers/DialogueTrigger.cpp
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Triggers/PrefabSpawnTrigger.cpp

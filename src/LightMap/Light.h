@@ -3,6 +3,7 @@
 #include "Hue.h"
 
 #include <SDL.h>
+#include <entt/entity/registry.hpp>
 
 struct Light {
     uint16_t id = SDL_MAX_UINT16;
@@ -14,4 +15,8 @@ struct Light {
     float falloff = 0.2f;
 
     Hue hue;
+    
+    entt::entity owner = entt::null;
+
+    float lastBrightness = 0.f;
 };

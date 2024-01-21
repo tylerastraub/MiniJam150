@@ -3,6 +3,7 @@
 #include "SpritesheetPropertiesComponent.h"
 #include "MineralComponent.h"
 #include "ItemType.h"
+#include "Hue.h"
 
 #include <entt/entity/registry.hpp>
 
@@ -18,6 +19,7 @@ namespace prefab {
     private:
         static SpritesheetPropertiesComponent createSpritesheetPropertiesComponent(Spritesheet* spritesheet);
         static float getMineralMineSpeed(MineralType mineralType);
+        static Hue getMineralHue(MineralType mineralType);
 
     };
 }

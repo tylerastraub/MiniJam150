@@ -11,4 +11,7 @@ namespace HuePreset {
     static Hue brightWarm = {0xff, 0xf5, 0x91};
     static Hue cool = {0x9f, 0xed, 0xd7};
     static Hue neutral = {0xe7, 0xdf, 0xc0};
+
+    // Mineral lights
+    static Hue cobalt = {0xa6, 0xfc, 0xdb};
 }

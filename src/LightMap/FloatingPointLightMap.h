@@ -5,6 +5,7 @@
 #include <list>
 #include <vector>
 #include <cstdint>
+#include <entt/entity/registry.hpp>
 
 #include "Hue.h"
 #include "Light.h"
@@ -22,6 +23,8 @@ public:
 
     uint16_t addLightSource(Light light);
     void removeLightSource(uint16_t lightId);
+
+    void cleanUpLightSources(entt::registry& ecs);
 
     Hue calculateEntityHue(strb::vec2f pos);
 

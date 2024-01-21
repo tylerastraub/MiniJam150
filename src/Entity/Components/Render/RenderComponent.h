@@ -6,4 +6,6 @@
 struct RenderComponent {
     strb::rect2f renderQuad = {0, 0, 0, 0};
     strb::vec2f renderQuadOffset = {0, 0};
+
+    int renderPriority = 0; // higher render priority = rendered closer to front
 };
