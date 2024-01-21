@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "Mineral.h"
 #include "Slug.h"
+#include "Torch.h"
 
 #include <algorithm>
 #include <iostream>
@@ -64,6 +65,9 @@ Level LevelParser::parseLevelFromTmx(entt::registry& ecs, std::string filePath, 
                         }
                         else if(object.getName() == "slug") {
                             prefab::Slug::create(ecs, objectPos);
+                        }
+                        else if(object.getName() == "torch") {
+                            prefab::Torch::create(ecs, objectPos);
                         }
                         // ============================== TRIGGERS ==============================
                         else if(object.getName() == "trigger") {

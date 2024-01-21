@@ -39,7 +39,7 @@ namespace {
                 }
             }
             else if(physics.offGroundCount <= physics.coyoteTime) {
-                input.allowedInputs = {InputEvent::LEFT, InputEvent::RIGHT, InputEvent::JUMP};
+                input.allowedInputs = {InputEvent::LEFT, InputEvent::RIGHT, InputEvent::DOWN, InputEvent::JUMP};
                 if(mining.canMine) input.allowedInputs.push_back(InputEvent::ACTION);
             }
             else {
@@ -101,7 +101,7 @@ namespace prefab {
         render.renderPriority = 1;
         ecs.emplace<RenderComponent>(player, render);
 
-        ecs.emplace<InputComponent>(player, InputComponent{{InputEvent::LEFT, InputEvent::RIGHT, InputEvent::JUMP, InputEvent::ACTION}});
+        ecs.emplace<InputComponent>(player, InputComponent{{InputEvent::LEFT, InputEvent::RIGHT, InputEvent::DOWN, InputEvent::JUMP, InputEvent::ACTION}});
 
         ecs.emplace<CollisionComponent>(player, CollisionComponent{{pos.x + 6, pos.y, 12, 32}, {6, 0}});
 

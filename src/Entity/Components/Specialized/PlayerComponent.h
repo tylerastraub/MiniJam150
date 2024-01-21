@@ -1,3 +1,5 @@
 #pragma once
 
-struct PlayerComponent {};
+struct PlayerComponent {
+    bool requestsLight = false;
+};

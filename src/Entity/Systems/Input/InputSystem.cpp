@@ -2,6 +2,7 @@
 #include "InputComponent.h"
 #include "PhysicsComponent.h"
 #include "MiningComponent.h"
+#include "PlayerComponent.h"
 
 #include <algorithm>
 
@@ -47,6 +48,11 @@ void InputSystem::update(entt::registry& ecs) {
             auto& mining = ecs.get<MiningComponent>(ent);
             mining.isMining = false;
             mining.canMine = true;
+        }
+        if(inputPressed(InputEvent::DOWN) &&
+           std::find(allowedInputs.begin(), allowedInputs.end(), InputEvent::DOWN) != allowedInputs.end()) {
+            auto& player = ecs.get<PlayerComponent>(ent);
+            player.requestsLight = true;
         }
     }
 }

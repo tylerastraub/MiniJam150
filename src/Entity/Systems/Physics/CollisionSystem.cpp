@@ -8,6 +8,8 @@
 #include "DirectionComponent.h"
 #include "PlayerComponent.h"
 #include "ItemPickupComponent.h"
+#include "TorchComponent.h"
+#include "InventoryComponent.h"
 
 void CollisionSystem::updateLevelCollisionsOnXAxis(entt::registry& ecs, Level level) {
     auto view = ecs.view<TransformComponent, CollisionComponent, PhysicsComponent>();
@@ -192,6 +194,33 @@ void CollisionSystem::checkForItemPickupCollisions(entt::registry& ecs, float ti
                 itemPickupComp.pickedUpBy = player;
                 itemPickupComp.onPickupScript->update(ecs, item, timescale, audio);
                 ecs.destroy(item);
+            }
+        }
+    }
+}
+
+void CollisionSystem::checkForTorchAndBeaconCollisions(entt::registry& ecs) {
+    entt::entity player = *ecs.view<PlayerComponent>().begin();
+    auto& playerComp = ecs.get<PlayerComponent>(player);
+    if(playerComp.requestsLight) {
+        playerComp.requestsLight = false;
+        auto pCollision = ecs.get<CollisionComponent>(player).collisionRect;
+        auto& inventory = ecs.get<InventoryComponent>(player);
+        auto torchAndBeaconView = ecs.view<TorchComponent>();
+        for(auto torch : torchAndBeaconView) {
+            auto& torchComp = ecs.get<TorchComponent>(torch);
+            auto tCollision = ecs.get<CollisionComponent>(torch).collisionRect;
+            if(RectUtils::isIntersecting(pCollision, tCollision)) {
+                if(torchComp.isBeacon && inventory.inventory[ItemType::TOPAZ] > 0) {
+                    inventory.inventory[ItemType::TOPAZ]--;
+                    torchComp.isLit = true;
+                    return;
+                }
+                else if(!torchComp.isBeacon && inventory.inventory[ItemType::COBALT] > 0) {
+                    inventory.inventory[ItemType::COBALT]--;
+                    torchComp.isLit = true;
+                    return;
+                }
             }
         }
     }

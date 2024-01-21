@@ -9,4 +9,5 @@ enum class SpritesheetID {
     MINING_MAGIC,
     INVENTORY_ICONS,
     SLUG,
+    TORCH,
 };

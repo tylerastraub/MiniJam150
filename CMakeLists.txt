@@ -41,6 +41,7 @@ set(SOURCE_INCLUDES
     ${PROJECT_SOURCE_DIR}/src/Entity/Components/Trigger
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Enemies
+    ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Environment
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Items
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Triggers
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/TypeEnums
@@ -74,8 +75,9 @@ set(SOURCES
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/ParticleEffect.cpp
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Player.cpp
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Enemies/Slug.cpp
+    ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Environment/Mineral.cpp
+    ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Environment/Torch.cpp
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Items/ItemPickup.cpp
-    ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Items/Mineral.cpp
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Triggers/DialogueTrigger.cpp
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Triggers/PrefabSpawnTrigger.cpp
     ${PROJECT_SOURCE_DIR}/src/Entity/Systems/Generic/InventorySystem.cpp

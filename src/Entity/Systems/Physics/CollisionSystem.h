@@ -17,6 +17,7 @@ public:
 
     void checkForMiningCollisions(entt::registry& ecs);
     void checkForItemPickupCollisions(entt::registry& ecs, float timescale, std::shared_ptr<Audio> audio);
+    void checkForTorchAndBeaconCollisions(entt::registry& ecs);
 
 private:
 

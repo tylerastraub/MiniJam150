@@ -16,15 +16,14 @@ std::mt19937 RandomGen::randEng{(unsigned int) std::chrono::system_clock::now().
 
 /**
  * @todo
- * === 1/20/24 ===
+ * - Fix hue blending (tile hue only uses most recent light hue applied to it)
+ * - Fix torch light disappearing when player walks away (likely some floating point error here)
  * - Add health system and makes enemies hurt you
  * - Add basic enemies
  *     - Jumping enemy (frog?)
  *     - Mimic (fake rock enemy)
- * - Add torches
  * - Add light beacons
  * - Add rose quartz mineral
- * === 1/21/24 ===
  * - Create giant metroidvania style level but rocks/enemies are randomly generated
  *     - Light beacons/torches placed manually
  * - Add beacon progress bar (or cave light up progress bar)
@@ -65,6 +64,7 @@ void GameState::tick(float timescale) {
 
     _collisionSystem.checkForMiningCollisions(_ecs);
     _collisionSystem.checkForItemPickupCollisions(_ecs, timescale, getAudioPlayer());
+    _collisionSystem.checkForTorchAndBeaconCollisions(_ecs);
 
     _lightSystem.update(_ecs, _level);
     _inventorySystem.update(_ecs);
