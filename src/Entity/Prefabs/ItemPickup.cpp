@@ -10,6 +10,7 @@
 #include "PhysicsComponent.h"
 #include "ItemPickupComponent.h"
 #include "InventoryComponent.h"
+#include "LightComponent.h"
 
 namespace {
     class ItemPickupOnPickupScript : public IScript {
@@ -20,6 +21,7 @@ namespace {
         void update(entt::registry& ecs, entt::entity owner, float timescale, std::shared_ptr<Audio> audio) override {
             auto itemPickupComp = ecs.get<ItemPickupComponent>(owner);
             ecs.get<InventoryComponent>(itemPickupComp.pickedUpBy).inventory[itemPickupComp.itemType]++;
+            ecs.get<LightComponent>(itemPickupComp.pickedUpBy).light.lastBrightness -= 0.01f;
         }
 
     private:

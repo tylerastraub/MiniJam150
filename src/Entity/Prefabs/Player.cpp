@@ -16,6 +16,7 @@
 #include "HueComponent.h"
 #include "PlayerComponent.h"
 #include "InventoryComponent.h"
+#include "PowerupComponent.h"
 
 namespace {
     class PlayerScript : public IScript {
@@ -116,6 +117,8 @@ namespace prefab {
         ecs.emplace<HueComponent>(player, HueComponent{});
 
         ecs.emplace<PlayerComponent>(player, PlayerComponent{});
+
+        ecs.emplace<PowerupComponent>(player, PowerupComponent{});
 
         InventoryComponent inventory;
         inventory.inventory[ItemType::COBALT] = 0;

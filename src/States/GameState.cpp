@@ -17,7 +17,6 @@ std::mt19937 RandomGen::randEng{(unsigned int) std::chrono::system_clock::now().
 /**
  * @todo
  * === 1/20/24 ===
- * - Apply effects to player based on inventory contents
  * - Add more minerals
  * - Add basic enemies
  *     - Big slug (basic, slow, weak enemy)
@@ -69,6 +68,7 @@ void GameState::tick(float timescale) {
     _collisionSystem.checkForItemPickupCollisions(_ecs, timescale, getAudioPlayer());
 
     _lightSystem.update(_ecs, _level);
+    _inventorySystem.update(_ecs);
 
     _cameraSystem.update(_ecs, timescale);
     _renderOffset = _cameraSystem.getCurrentCameraOffset();

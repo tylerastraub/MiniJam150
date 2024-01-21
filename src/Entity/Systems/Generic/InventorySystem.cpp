@@ -1,6 +1,19 @@
 #include "InventorySystem.h"
 #include "InventoryComponent.h"
 #include "SpritesheetRegistry.h"
+#include "PowerupComponent.h"
+
+void InventorySystem::update(entt::registry& ecs) {
+    auto view = ecs.view<InventoryComponent, PowerupComponent>();
+    for(auto ent : view) {
+        auto inventory = ecs.get<InventoryComponent>(ent).inventory;
+        auto& powerup = ecs.get<PowerupComponent>(ent);
+        int numCobalt = inventory[ItemType::COBALT];
+        // int numTopaz = inventory[ItemType::TOPAZ];
+        powerup.brightnessBoost = COBALT_BRIGHTNESS_BOOST * numCobalt;
+        powerup.falloffBoost = COBALT_FALLOFF_BOOST * numCobalt;
+    }
+}
 
 void InventorySystem::render(entt::registry& ecs, std::shared_ptr<Text> text) {
     auto view = ecs.view<InventoryComponent>();

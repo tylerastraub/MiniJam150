@@ -2,6 +2,7 @@
 #include "LightComponent.h"
 #include "TransformComponent.h"
 #include "HueComponent.h"
+#include "PowerupComponent.h"
 
 void LightSystem::update(entt::registry& ecs, Level& level) {
     auto view = ecs.view<LightComponent, TransformComponent>();
@@ -14,7 +15,13 @@ void LightSystem::update(entt::registry& ecs, Level& level) {
            lightComp.light.brightness != lightComp.light.lastBrightness) {
             if(level.getLightMap()->hasLight(lightComp.light.id)) removeLightSource(level, lightComp.light);
             lightComp.light.pos += (transform.position - transform.lastPosition) / level.getTileSize();
-            lightComp.light.id = addLightSource(level, lightComp.light);
+            Light newLight = lightComp.light;
+            if(ecs.all_of<PowerupComponent>(entity)) {
+                auto powerup = ecs.get<PowerupComponent>(entity);
+                newLight.brightness += powerup.brightnessBoost;
+                newLight.falloff += powerup.falloffBoost;
+            }
+            lightComp.light.id = addLightSource(level, newLight);
         }
         lightComp.light.lastBrightness = lightComp.light.brightness;
     }
