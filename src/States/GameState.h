@@ -14,6 +14,7 @@
 #include "ScriptSystem.h"
 #include "CameraSystem.h"
 #include "LightSystem.h"
+#include "InventorySystem.h"
 
 #include <memory>
 #include <entt/entity/registry.hpp>
@@ -51,5 +52,6 @@ private:
     ScriptSystem _scriptSystem;
     CameraSystem _cameraSystem;
     LightSystem _lightSystem;
+    InventorySystem _inventorySystem;
 
 };

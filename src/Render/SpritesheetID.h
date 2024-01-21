@@ -7,4 +7,5 @@ enum class SpritesheetID {
     PLAYER,
     MINERALS,
     MINING_MAGIC,
+    INVENTORY_ICONS,
 };

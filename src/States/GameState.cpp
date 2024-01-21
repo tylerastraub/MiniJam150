@@ -17,9 +17,7 @@ std::mt19937 RandomGen::randEng{(unsigned int) std::chrono::system_clock::now().
 /**
  * @todo
  * === 1/20/24 ===
- * - Add inventory
- *     - Apply effects to player based on inventory contents
- *     - Show inventory contents in top left with cute icons
+ * - Apply effects to player based on inventory contents
  * - Add more minerals
  * - Add basic enemies
  *     - Big slug (basic, slow, weak enemy)
@@ -92,6 +90,8 @@ void GameState::render() {
     _level.render(_renderOffset);
 
     _renderSystem.render(getRenderer(), _ecs, _renderOffset);
+
+    _inventorySystem.render(_ecs, getText(TextSize::TINY));
 
     // debug
     if(_debug) {

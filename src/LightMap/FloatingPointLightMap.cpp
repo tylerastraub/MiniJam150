@@ -26,7 +26,7 @@ uint16_t FloatingPointLightMap::addLightSource(Light light) {
     return light.id;
 }
 
-void FloatingPointLightMap::removeLightSource(uint16_t lightId) {
+std::_List_iterator<Light> FloatingPointLightMap::removeLightSource(uint16_t lightId) {
     for(auto it = _lightSources.begin(); it != _lightSources.end(); ++it) {
         if(it->id == lightId) {
             // Update lightmap by removing light's brightness from lightmap...
@@ -35,17 +35,21 @@ void FloatingPointLightMap::removeLightSource(uint16_t lightId) {
             light.falloff *= -1;
             updateLightMap(light);
             // ...then remove the light from the lightSources list
-            _lightSources.erase(it);
-            return;
+            return _lightSources.erase(it);
         }
     }
     std::cout << "Error: attempting to remove nonexistent light source. ID: " << lightId << std::endl;
+    return _lightSources.end();
 }
 
 void FloatingPointLightMap::cleanUpLightSources(entt::registry& ecs) {
-    for(auto light : _lightSources) {
+    for(auto it = _lightSources.begin(); it != _lightSources.end(); ++it) {
+        auto light = *it;
         if(light.owner != entt::null) {
-            if(!ecs.valid(light.owner)) removeLightSource(light.id);
+            if(!ecs.valid(light.owner)) {
+                it = removeLightSource(light.id);
+                --it;
+            }
         }
     }
 }

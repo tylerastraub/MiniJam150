@@ -39,6 +39,7 @@ namespace {
                     auto& miner = ecs.get<MiningComponent>(mineral.minedBy);
                     miner.canMine = false;
                     miner.isMining = false;
+                    miner.mineral = entt::null;
                 }
                 auto pos = ecs.get<TransformComponent>(owner).position;
                 auto quad = ecs.get<RenderComponent>(owner).renderQuad;

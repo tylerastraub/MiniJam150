@@ -9,6 +9,7 @@
 #include "HueComponent.h"
 #include "PhysicsComponent.h"
 #include "ItemPickupComponent.h"
+#include "InventoryComponent.h"
 
 namespace {
     class ItemPickupOnPickupScript : public IScript {
@@ -18,7 +19,7 @@ namespace {
 
         void update(entt::registry& ecs, entt::entity owner, float timescale, std::shared_ptr<Audio> audio) override {
             auto itemPickupComp = ecs.get<ItemPickupComponent>(owner);
-            // todo: ecs.get<InventoryComponent>(itemPickupComp.pickedUpBy).inventory.add(itemPickupComp.itemType);
+            ecs.get<InventoryComponent>(itemPickupComp.pickedUpBy).inventory[itemPickupComp.itemType]++;
         }
 
     private:
@@ -54,7 +55,7 @@ namespace prefab {
 
         ecs.emplace<CollisionComponent>(item, CollisionComponent{{pos.x, pos.y + 6, 12, 10}, {0, 6}});
 
-        ecs.emplace<ItemPickupComponent>(item, ItemPickupComponent{std::make_shared<ItemPickupOnPickupScript>()});
+        ecs.emplace<ItemPickupComponent>(item, ItemPickupComponent{std::make_shared<ItemPickupOnPickupScript>(), itemType});
 
         SpritesheetPropertiesComponent propsComp = createSpritesheetPropertiesComponent(itemType);
         ecs.emplace<SpritesheetPropertiesComponent>(item, propsComp);

@@ -141,6 +141,7 @@ bool Game::loadResources() {
     if(!SpritesheetRegistry::addSpritesheet(_renderer, SpritesheetID::PLAYER, "res/spritesheet/player.png", 24, 32)) return false;
     if(!SpritesheetRegistry::addSpritesheet(_renderer, SpritesheetID::MINERALS, "res/spritesheet/minerals.png", 16, 16)) return false;
     if(!SpritesheetRegistry::addSpritesheet(_renderer, SpritesheetID::MINING_MAGIC, "res/spritesheet/mining_magic.png", 16, 16)) return false;
+    if(!SpritesheetRegistry::addSpritesheet(_renderer, SpritesheetID::INVENTORY_ICONS, "res/spritesheet/inventory_icons.png", 16, 16)) return false;
 
     // Audio
     _audioPlayer = std::make_shared<Audio>();
