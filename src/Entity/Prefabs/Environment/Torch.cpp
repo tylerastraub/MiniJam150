@@ -21,7 +21,7 @@ namespace {
             auto& propsComp = ecs.get<SpritesheetPropertiesComponent>(owner);
 
             if(torch.isLit) {
-                lightComp.light.brightness = 1.f;
+                lightComp.light.brightness = 0.9f;
                 auto props = propsComp.getPrimarySpritesheetProperties();
                 props.yTileIndex = 1;
                 propsComp.setPrimarySpritesheetProperties(props);
@@ -63,7 +63,7 @@ namespace prefab {
         light.pos = strb::vec2f{render.renderQuad.x + render.renderQuad.w / 2, render.renderQuad.y + render.renderQuad.h / 2} / 16;
         light.brightness = 0.f;
         light.hue = HuePreset::softWarm;
-        light.falloff = 0.05f;
+        light.falloff = 0.06f;
         light.owner = torch;
         ecs.emplace<LightComponent>(torch, LightComponent{light});
 

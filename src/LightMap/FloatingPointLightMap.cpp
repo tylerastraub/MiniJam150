@@ -8,9 +8,9 @@ void FloatingPointLightMap::allocate(int width, int depth) {
     _lightMapWidth = width;
     _lightMapDepth = depth;
     for(int y = 0; y < depth; ++y) {
-        std::vector<std::pair<int, Hue>> row;
+        std::vector<LightMapNode> row;
         for(int x = 0; x < width; ++x) {
-            row.push_back({0, Hue()});
+            row.push_back(LightMapNode{});
         }
         _lightMap.push_back(row);
     }
@@ -78,22 +78,23 @@ Hue FloatingPointLightMap::calculateEntityHue(strb::vec2f pos) {
 Hue FloatingPointLightMap::getHue(strb::vec2f pos) {
     // bounds check
     if(!isLightInBounds(pos)) return Hue();
-    std::pair<int, Hue> hue = _lightMap[pos.y][pos.x];
-    if(hue.first < 0) return Hue();
-    else if(hue.first > 255) return Hue();
-    hue.second.red *= ((float) hue.first / 255.f);
-    hue.second.blue *= ((float) hue.first / 255.f);
-    hue.second.green *= ((float) hue.first / 255.f);
-    return hue.second;
+    int brightness = getBrightness(pos);
+    Hue hue = _lightMap[pos.y][pos.x].hue;
+    if(brightness < 0) return Hue();
+    else if(brightness > 255.f) brightness = 255.f;
+    hue.red *= ((float) brightness / 255.f);
+    hue.blue *= ((float) brightness / 255.f);
+    hue.green *= ((float) brightness / 255.f);
+    return hue;
 }
 
 int FloatingPointLightMap::getBrightness(strb::vec2f pos) {
     // bounds check
     if(!isLightInBounds(pos)) return 0;
-    std::pair<int, Hue> light = _lightMap[pos.y][pos.x];
-    if(light.first < 0) return 0;
-    else if(light.first > 255) return 255;
-    return light.first;
+    LightMapNode light = _lightMap[pos.y][pos.x];
+    if(light.brightness < 0) return 0;
+    else if(light.brightness > 255) return 255;
+    return light.brightness;
 }
 
 bool FloatingPointLightMap::hasLight(uint16_t lightId) {
@@ -112,23 +113,25 @@ bool FloatingPointLightMap::isLightInBounds(strb::vec2f pos) {
 
 // iterations are inconsistent - sometimes barely moving (but staying in the same tile) will have a different lightmap result
 void FloatingPointLightMap::updateLightMap(Light light) {
-    strb::vec2i neighbors[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
+    strb::vec2f neighbors[8] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
     // calculate directional light falloff so that moving lights appear smoother
     strb::vec2f posRemainder = {light.pos.x - std::floor(light.pos.x) - 0.5f, light.pos.y - std::floor(light.pos.y) - 0.5f};
-    float directionalFalloff[4] = {
-        light.falloff * (1 - posRemainder.x),
-        light.falloff * (1 - posRemainder.y),
-        light.falloff * (1 + posRemainder.x),
-        light.falloff * (1 + posRemainder.y)
+    float directionalFalloff[8] = {
+        light.falloff * (1 - posRemainder.x), // {1, 0}
+        light.falloff * (1 - posRemainder.y), // {0, 1}
+        light.falloff * (1 + posRemainder.x), // {-1, 0}
+        light.falloff * (1 + posRemainder.y), // {0, -1}
+        light.falloff * (std::hypot(1 - posRemainder.x, 1 - posRemainder.y)), // {1, 1}
+        light.falloff * (std::hypot(1 - posRemainder.x, 1 + posRemainder.y)), // {1, -1}
+        light.falloff * (std::hypot(1 + posRemainder.x, 1 - posRemainder.y)), // {-1, 1}
+        light.falloff * (std::hypot(1 + posRemainder.x, 1 + posRemainder.y))  // {-1, -1}
     };
-    size_t neighborsSize = 4;
+    size_t neighborsSize = 8;
 
     std::queue<Light> lightQueue;
     lightQueue.push(light);
     std::vector<Light> checkedLights;
     Light currentLight;
-    int iterations = 0; // debug
-    int counter = 0;
     while(!lightQueue.empty()) {
         currentLight = lightQueue.front();
         lightQueue.pop();
@@ -141,12 +144,11 @@ void FloatingPointLightMap::updateLightMap(Light light) {
             }
         }
         if(alreadyCheckedLight) continue;
-        ++iterations;
         checkedLights.push_back(currentLight);
-        addLightToLightMap(currentLight.pos, currentLight.brightness, currentLight.hue);
+        addLightToLightMap(currentLight);
         if(std::abs(currentLight.brightness) - std::abs(currentLight.falloff) > 0) {
             for(size_t i = 0; i < neighborsSize; ++i) {
-                strb::vec2i neighbor = neighbors[i];
+                strb::vec2f neighbor = neighbors[i];
                 // use directional falloff for first iteration only
                 float falloff = (currentLight.pos == light.pos) ? directionalFalloff[i] : light.falloff;
                 if(isLightInBounds(currentLight.pos + neighbor)) {
@@ -155,23 +157,73 @@ void FloatingPointLightMap::updateLightMap(Light light) {
                     nextLight.brightness = currentLight.brightness - falloff;
                     nextLight.falloff = falloff;
                     nextLight.hue = currentLight.hue;
+                    nextLight.id = currentLight.id;
                     lightQueue.push(nextLight);
                 }
             }
         }
     }
-    // std::cout << "LightMap: " << iterations << " iterations ran" << std::endl;
 }
 
-void FloatingPointLightMap::addLightToLightMap(strb::vec2f pos, float brightness, Hue hue) {
+void FloatingPointLightMap::addLightToLightMap(Light light) {
     // bounds check
-    if(!isLightInBounds(pos)) return;
-    brightness *= 255;
-    if(brightness < 0 && std::abs(brightness) >= _lightMap[pos.y][pos.x].first) {
-        _lightMap[pos.y][pos.x].first = 0;
+    if(!isLightInBounds(light.pos)) return;
+    auto& sources = _lightMap[light.pos.y][light.pos.x].lightSources;
+    auto idMatches = [](Light light1, Light light2) { return light1.id == light2.id; };
+    if(light.brightness < 0.f) {
+        for(auto it = sources.begin(); it != sources.end(); ++it) {
+            if(it->id == light.id) {
+                sources.erase(it);
+                break;
+            }
+        }
     }
     else {
-        _lightMap[pos.y][pos.x].first += brightness;
+        bool hasLight = false;
+        for(auto it = sources.begin(); it != sources.end(); ++it) {
+            if(it->id == light.id) {
+                hasLight = true;
+                break;
+            }
+        }
+        if(!hasLight) sources.push_back(light);
     }
-    _lightMap[pos.y][pos.x].second = hue;
+    light.brightness = std::round(light.brightness * 255.f);
+    if(light.brightness < 0.f && std::abs(light.brightness) >= _lightMap[light.pos.y][light.pos.x].brightness) {
+        _lightMap[light.pos.y][light.pos.x].brightness = 0;
+    }
+    else {
+        _lightMap[light.pos.y][light.pos.x].brightness += light.brightness;
+    }
+    updateHueInLightMap(light.pos);
+}
+
+void FloatingPointLightMap::updateHueInLightMap(strb::vec2f pos) {
+    LightMapNode& node = _lightMap[pos.y][pos.x];
+    float red = 0;
+    float green = 0;
+    float blue = 0;
+    float totalBrightness = 0.f;
+    std::vector<std::pair<float, Hue>> lights;
+    for(auto light : node.lightSources) {
+        if(light.id == SDL_MAX_UINT16) continue;
+        totalBrightness += light.brightness;
+        lights.push_back({light.brightness, light.hue});
+    }
+    for(auto light : lights) {
+        float weight = light.first / totalBrightness;
+        red += light.second.red * weight;
+        green += light.second.green * weight;
+        blue += light.second.blue * weight;
+    }
+    float max = (red > green) ? red : green;
+    if(blue > max) max = blue;
+    red = red / max * 255.f;
+    green = green / max * 255.f;
+    blue = blue / max * 255.f;
+    node.hue = {
+        static_cast<uint8_t>(red),
+        static_cast<uint8_t>(green),
+        static_cast<uint8_t>(blue)
+    };
 }

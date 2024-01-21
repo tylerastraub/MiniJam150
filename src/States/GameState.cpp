@@ -16,18 +16,21 @@ std::mt19937 RandomGen::randEng{(unsigned int) std::chrono::system_clock::now().
 
 /**
  * @todo
- * - Fix hue blending (tile hue only uses most recent light hue applied to it)
- * - Fix torch light disappearing when player walks away (likely some floating point error here)
+ * ==== ESSENTIALS ====
  * - Add health system and makes enemies hurt you
- * - Add basic enemies
- *     - Jumping enemy (frog?)
- *     - Mimic (fake rock enemy)
- * - Add light beacons
- * - Add rose quartz mineral
  * - Create giant metroidvania style level but rocks/enemies are randomly generated
  *     - Light beacons/torches placed manually
  * - Add beacon progress bar (or cave light up progress bar)
  * - Add sounds
+ * - Add light beacons
+ * 
+ * ==== NICE TO HAVES ====
+ * - Add basic enemies
+ *     - Jumping enemy (frog?)
+ *     - Mimic (fake rock enemy)
+ * - Make enemies avoid light (so that torches have more reason to be lit up)
+ * - Add controls indicator on screen (down arrow key appears when next to torch/beacon)
+ * - Add rose quartz and emerald mineral
  * - Add wizard lab
  * - Add music
  * - Add more extra art :)

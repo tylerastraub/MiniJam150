@@ -122,9 +122,11 @@ namespace prefab {
         ecs.emplace<PowerupComponent>(player, PowerupComponent{});
 
         InventoryComponent inventory;
-        inventory.inventory[ItemType::COBALT] = 0;
         inventory.inventory[ItemType::TOPAZ] = 0;
-        ecs.emplace<InventoryComponent>(player, InventoryComponent{});
+        // inventory.inventory[ItemType::ROSE_QUARTZ] = 0;
+        // inventory.inventory[ItemType::EMERALD] = 0;
+        inventory.inventory[ItemType::COBALT] = 0;
+        ecs.emplace<InventoryComponent>(player, InventoryComponent{inventory});
 
         Light light;
         light.pos = strb::vec2f{render.renderQuad.x + render.renderQuad.w / 2, render.renderQuad.y + render.renderQuad.h / 2} / 16;

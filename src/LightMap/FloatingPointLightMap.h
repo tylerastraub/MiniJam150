@@ -16,6 +16,12 @@
  */
 class FloatingPointLightMap {
 public:
+    struct LightMapNode {
+        int brightness = 0;
+        Hue hue = {0xFF, 0xFF, 0xFF};
+        std::list<Light> lightSources;
+    };
+
     FloatingPointLightMap() = default;
     ~FloatingPointLightMap() = default;
 
@@ -36,13 +42,13 @@ public:
 private:
     bool isLightInBounds(strb::vec2f pos);
     void updateLightMap(Light light);
-    void addLightToLightMap(strb::vec2f pos, float brightness, Hue hue);
+    void addLightToLightMap(Light light);
+    void updateHueInLightMap(strb::vec2f pos);
 
     uint16_t _currentLightId = 0;
 
     std::list<Light> _lightSources;
-    // std::pair<brightness, hue>
-    std::vector<std::vector<std::pair<int, Hue>>> _lightMap;
+    std::vector<std::vector<LightMapNode>> _lightMap;
 
     int _lightMapWidth = 0;
     int _lightMapDepth = 0;
