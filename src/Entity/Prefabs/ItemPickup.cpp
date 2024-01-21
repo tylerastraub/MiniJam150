@@ -86,6 +86,10 @@ namespace prefab {
                 props.yTileIndex = 0;
                 propsComp.spritesheet = SpritesheetRegistry::getSpritesheet(SpritesheetID::MINERALS);
                 break;
+            case ItemType::TOPAZ:
+                props.xTileIndex = 4;
+                props.yTileIndex = 1;
+                propsComp.spritesheet = SpritesheetRegistry::getSpritesheet(SpritesheetID::MINERALS);
             default:
                 break;
         }

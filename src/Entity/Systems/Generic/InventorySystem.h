@@ -18,10 +18,10 @@ public:
 private:
     int getYSpritesheetIndex(ItemType itemType);
 
-    const float COBALT_BRIGHTNESS_BOOST = 0.01f;
-    const float COBALT_FALLOFF_BOOST = -0.005f;
-    const float TOPAZ_BRIGHTNESS_BOOST = 0.2f;
-    const float TOPAZ_FALLOFF_BOOST = -0.05f;
+    const float COBALT_BRIGHTNESS_BOOST = 0.02f;
+    const float COBALT_FALLOFF_BOOST = -0.008f;
+    const float TOPAZ_BRIGHTNESS_BOOST = 0.1f;
+    const float TOPAZ_FALLOFF_BOOST = -0.04f;
     const float EMERALD_MINE_SPEED_BOOST = -0.002f;
 
 };

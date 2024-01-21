@@ -14,4 +14,5 @@ namespace HuePreset {
 
     // Mineral lights
     static Hue cobalt = {0xa6, 0xfc, 0xdb};
+    static Hue topaz = {0xf9, 0xa3, 0x1b};
 }

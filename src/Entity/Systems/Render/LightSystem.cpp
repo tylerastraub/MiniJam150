@@ -19,7 +19,9 @@ void LightSystem::update(entt::registry& ecs, Level& level) {
             if(ecs.all_of<PowerupComponent>(entity)) {
                 auto powerup = ecs.get<PowerupComponent>(entity);
                 newLight.brightness += powerup.brightnessBoost;
+                if(newLight.brightness > 1.f) newLight.brightness = 1.f;
                 newLight.falloff += powerup.falloffBoost;
+                if(newLight.falloff < 0.05f) newLight.falloff = 0.05f;
             }
             lightComp.light.id = addLightSource(level, newLight);
         }

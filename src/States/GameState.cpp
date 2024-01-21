@@ -17,7 +17,6 @@ std::mt19937 RandomGen::randEng{(unsigned int) std::chrono::system_clock::now().
 /**
  * @todo
  * === 1/20/24 ===
- * - Add more minerals
  * - Add basic enemies
  *     - Big slug (basic, slow, weak enemy)
  *     - Mimic (fake rock enemy)
@@ -25,6 +24,7 @@ std::mt19937 RandomGen::randEng{(unsigned int) std::chrono::system_clock::now().
  * - Add health system
  * - Add torches
  * - Add light beacons
+ * - Add rose quartz mineral
  * === 1/21/24 ===
  * - Create giant metroidvania style level but rocks/enemies are randomly generated
  *     - Light beacons/torches placed manually

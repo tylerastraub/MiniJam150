@@ -9,9 +9,9 @@ void InventorySystem::update(entt::registry& ecs) {
         auto inventory = ecs.get<InventoryComponent>(ent).inventory;
         auto& powerup = ecs.get<PowerupComponent>(ent);
         int numCobalt = inventory[ItemType::COBALT];
-        // int numTopaz = inventory[ItemType::TOPAZ];
-        powerup.brightnessBoost = COBALT_BRIGHTNESS_BOOST * numCobalt;
-        powerup.falloffBoost = COBALT_FALLOFF_BOOST * numCobalt;
+        int numTopaz = inventory[ItemType::TOPAZ];
+        powerup.brightnessBoost = COBALT_BRIGHTNESS_BOOST * numCobalt + TOPAZ_BRIGHTNESS_BOOST * numTopaz;
+        powerup.falloffBoost = COBALT_FALLOFF_BOOST * numCobalt + TOPAZ_FALLOFF_BOOST * numTopaz;
     }
 }
 
@@ -23,11 +23,11 @@ void InventorySystem::render(entt::registry& ecs, std::shared_ptr<Text> text) {
         int xPadding = 0;
         for(const auto& [itemType, quantity] : inventory) {
             ss->setTileIndex(0, getYSpritesheetIndex(itemType));
-            ss->render(24 * xPadding + 1, 3, 16, 16);
+            ss->render(20 * xPadding + 1, 3, 16, 16);
 
             text->setString("x" + std::to_string(quantity));
-            text->render(24 * xPadding + 11, 12, 0, 0, 0);
-            text->render(24 * xPadding + 10, 11);
+            text->render(20 * xPadding + 11, 13, 0, 0, 0);
+            text->render(20 * xPadding + 10, 12);
 
             ++xPadding;
         }
@@ -38,6 +38,8 @@ int InventorySystem::getYSpritesheetIndex(ItemType itemType) {
     switch(itemType) {
         case ItemType::COBALT:
             return 0;
+        case ItemType::TOPAZ:
+            return 1;
         default:
             break;
     }

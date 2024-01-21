@@ -2,17 +2,13 @@
 
 #include "rect2.h"
 #include "vec2.h"
+#include "ItemType.h"
 
 #include <cmath>
 #include <entt/entity/entity.hpp>
 
-enum class MineralType {
-    NOVAL = -1,
-    COBALT = 0,
-};
-
 struct MineralComponent {
-    MineralType type = MineralType::NOVAL;
+    ItemType type = ItemType::NOVAL;
     strb::rect2f collisionRect = {0.f, 0.f, 0.f, 0.f};
     strb::vec2f collisionRectOffset = {0.f, 0.f};
     float mineSpeed = 0.01f;

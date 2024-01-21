@@ -6,6 +6,7 @@
 #include "DialogueTrigger.h"
 #include "PrefabSpawnTrigger.h"
 #include "Player.h"
+#include "Mineral.h"
 
 #include <algorithm>
 #include <iostream>
@@ -57,7 +58,7 @@ Level LevelParser::parseLevelFromTmx(entt::registry& ecs, std::string filePath, 
                             level.setPlayerId(player);
                         }
                         else if(object.getName() == "mineral") {
-                            MineralType mineralType = convertStringToMineralType(object.getClass());
+                            ItemType mineralType = convertStringToItemType(object.getClass());
                             prefab::Mineral::create(ecs, objectPos, mineralType);
                         }
                         // ============================== TRIGGERS ==============================
@@ -197,10 +198,13 @@ PrefabType LevelParser::convertStringToPrefabType(std::string prefabTypeString) 
     return result;
 }
 
-MineralType LevelParser::convertStringToMineralType(std::string mineralTypeString) {
-    MineralType result = MineralType::NOVAL;
-    if(mineralTypeString == "COBALT") {
-        result = MineralType::COBALT;
+ItemType LevelParser::convertStringToItemType(std::string itemTypeString) {
+    ItemType result = ItemType::NOVAL;
+    if(itemTypeString == "COBALT") {
+        result = ItemType::COBALT;
+    }
+    else if(itemTypeString == "TOPAZ") {
+        result = ItemType::TOPAZ;
     }
 
     return result;

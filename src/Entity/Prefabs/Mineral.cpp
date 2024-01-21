@@ -43,22 +43,10 @@ namespace {
                 }
                 auto pos = ecs.get<TransformComponent>(owner).position;
                 auto quad = ecs.get<RenderComponent>(owner).renderQuad;
-                prefab::ItemPickup::create(ecs, {pos.x, pos.y - 8}, convertMineralTypeToItemType(mineral.type));
+                prefab::ItemPickup::create(ecs, {pos.x, pos.y - 8}, mineral.type);
                 ecs.destroy(owner);
             }
         }
-        
-    
-        ItemType convertMineralTypeToItemType(MineralType mineralType) {
-        switch(mineralType) {
-            case MineralType::COBALT:
-                return ItemType::COBALT;
-            default:
-                break;
-        }
-
-        return ItemType::NOVAL;
-    }
 
     private:
 
@@ -67,10 +55,10 @@ namespace {
 
 namespace prefab {
     entt::entity Mineral::create(entt::registry& ecs) {
-        return create(ecs, {0.f, 0.f}, MineralType::NOVAL);
+        return create(ecs, {0.f, 0.f}, ItemType::NOVAL);
     }
 
-    entt::entity Mineral::create(entt::registry& ecs, strb::vec2f pos, MineralType mineralType) {
+    entt::entity Mineral::create(entt::registry& ecs, strb::vec2f pos, ItemType mineralType) {
         entt::entity mineral = ecs.create();
 
         ecs.emplace<TransformComponent>(mineral, pos, pos);
@@ -119,20 +107,24 @@ namespace prefab {
         return propsComp;
     }
 
-    float Mineral::getMineralMineSpeed(MineralType mineralType) {
+    float Mineral::getMineralMineSpeed(ItemType mineralType) {
         switch(mineralType) {
-            case MineralType::COBALT:
+            case ItemType::COBALT:
                 return 0.01f;
+            case ItemType::TOPAZ: 
+                return 0.004f;
             default:
                 break;
         }
         return 0.f;
     }
 
-    Hue Mineral::getMineralHue(MineralType mineralType) {
+    Hue Mineral::getMineralHue(ItemType mineralType) {
         switch(mineralType) {
-            case MineralType::COBALT:
+            case ItemType::COBALT:
                 return HuePreset::cobalt;
+            case ItemType::TOPAZ:
+                return HuePreset::topaz;
             default:
                 break;
         }
