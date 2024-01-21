@@ -9,6 +9,7 @@
 #include "Mineral.h"
 #include "Slug.h"
 #include "Torch.h"
+#include "Beacon.h"
 
 #include <algorithm>
 #include <iostream>
@@ -69,6 +70,10 @@ Level LevelParser::parseLevelFromTmx(entt::registry& ecs, std::string filePath, 
                         }
                         else if(object.getName() == "torch") {
                             prefab::Torch::create(ecs, objectPos);
+                        }
+                        else if(object.getName() == "beacon") {
+                            prefab::Beacon::create(ecs, objectPos);
+                            level.setNumOfBeacons(level.getNumOfBeacons() + 1);
                         }
                         // ============================== TRIGGERS ==============================
                         else if(object.getName() == "trigger") {

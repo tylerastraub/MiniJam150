@@ -11,4 +11,5 @@ enum class SpritesheetID {
     SLUG,
     TORCH,
     HEART,
+    BEACON,
 };

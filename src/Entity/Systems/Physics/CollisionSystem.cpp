@@ -220,6 +220,7 @@ void CollisionSystem::checkForTorchAndBeaconCollisions(entt::registry& ecs) {
                 if(torchComp.isBeacon && inventory.inventory[ItemType::TOPAZ] > 0) {
                     inventory.inventory[ItemType::TOPAZ]--;
                     torchComp.isLit = true;
+                    playerComp.beaconsLit++;
                     return;
                 }
                 else if(!torchComp.isBeacon && inventory.inventory[ItemType::COBALT] > 0) {

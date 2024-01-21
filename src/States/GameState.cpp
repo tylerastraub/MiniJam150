@@ -20,7 +20,6 @@ std::mt19937 RandomGen::randEng{(unsigned int) std::chrono::system_clock::now().
 /**
  * @todo
  * ==== ESSENTIALS ====
- * - Add light beacons
  * - Create giant metroidvania style level but rocks/enemies are randomly generated
  *     - Light beacons/torches placed manually
  * - Add beacon progress notification

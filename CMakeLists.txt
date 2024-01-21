@@ -75,6 +75,7 @@ set(SOURCES
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/ParticleEffect.cpp
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Player.cpp
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Enemies/Slug.cpp
+    ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Environment/Beacon.cpp
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Environment/Mineral.cpp
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Environment/Torch.cpp
     ${PROJECT_SOURCE_DIR}/src/Entity/Prefabs/Items/ItemPickup.cpp

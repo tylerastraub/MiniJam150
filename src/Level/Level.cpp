@@ -79,6 +79,10 @@ void Level::setPlayerSpawn(strb::vec2f spawn) {
     _playerSpawn = spawn;
 }
 
+void Level::setNumOfBeacons(int numBeacons) {
+    _numBeacons = numBeacons;
+}
+
 Tile Level::getTileAt(int x, int y) {
     if(x >= 0 && x < _tilemapWidth && y >= 0 && y < _tilemapHeight) {
         return _tilemap[y][x];
@@ -108,4 +112,8 @@ std::shared_ptr<FloatingPointLightMap> Level::getLightMap() {
 
 strb::vec2f Level::getPlayerSpawn() {
     return _playerSpawn;
+}
+
+int Level::getNumOfBeacons() {
+    return _numBeacons;
 }
