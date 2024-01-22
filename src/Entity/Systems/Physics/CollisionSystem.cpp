@@ -203,7 +203,7 @@ void CollisionSystem::checkForItemPickupCollisions(entt::registry& ecs, float ti
     }
 }
 
-void CollisionSystem::checkForTorchAndBeaconCollisions(entt::registry& ecs) {
+void CollisionSystem::checkForTorchAndBeaconCollisions(entt::registry& ecs, std::shared_ptr<Audio> audio) {
     entt::entity player = *ecs.view<PlayerComponent>().begin();
     auto& health = ecs.get<HealthComponent>(player);
     if(health.health <= 0) return;
@@ -222,11 +222,13 @@ void CollisionSystem::checkForTorchAndBeaconCollisions(entt::registry& ecs) {
                     torchComp.isLit = true;
                     playerComp.beaconsLit++;
                     playerComp.beaconRecentlyLit = true;
+                    audio->playAudio(entt::null, AudioSound::BEACON_LIT, 1.f);
                     return;
                 }
                 else if(!torchComp.isBeacon && inventory.inventory[ItemType::COBALT] > 0) {
                     inventory.inventory[ItemType::COBALT]--;
                     torchComp.isLit = true;
+                    audio->playAudio(entt::null, AudioSound::TORCH_LIT, 1.f);
                     return;
                 }
             }
@@ -250,6 +252,7 @@ void CollisionSystem::checkForPlayerAndEnemyCollisions(entt::registry& ecs, floa
                 auto& physics = ecs.get<PhysicsComponent>(player);
                 float coefficient = (pPos.x - ePos.x < 0.f) ? -1.f : 1.f;
                 physics.velocity = {120.f * coefficient, -80.f};
+                audio->playAudio(player, AudioSound::PLAYER_HURT, 1.f);
                 return;
             }
         }

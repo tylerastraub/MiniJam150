@@ -52,7 +52,19 @@ namespace {
                 input.allowedInputs = {InputEvent::RESPAWN};
                 return;
             }
+            
+            // sounds
+            if(physics.offGroundCount == 1 && physics.velocity.y < 0.f) {
+                audio->playAudio(owner, AudioSound::JUMP, 0.5f);
+            }
+            if(mining.isMining && mining.mineral != entt::null && !audio->isPlaying(owner, AudioSound::MINING)) {
+                audio->playAudio(owner, AudioSound::MINING, 0.25f, true);
+            }
+            else if(!mining.isMining && audio->isPlaying(owner, AudioSound::MINING)) {
+                audio->stopAudio(owner, AudioSound::MINING);
+            }
 
+            // input setting
             if(health.currentInvulnTimer < health.hitstunTime) {
                 input.allowedInputs = {};
             }

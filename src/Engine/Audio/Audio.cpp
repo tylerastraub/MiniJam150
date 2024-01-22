@@ -39,16 +39,16 @@ bool Audio::addAudio(AudioSound soundName, const char * filepath) {
     return true;
 }
 
-void Audio::playAudio(int parentId, AudioSound audio, float volume, bool looping) {
-    if(!_playingAudio[parentId][audio]) _playingAudio[parentId][audio] = new AudioPool(_context);
-    _playingAudio[parentId][audio]->addPlayingSound(_loadedAudio[audio], volume, looping);
+void Audio::playAudio(entt::entity entity, AudioSound audio, float volume, bool looping) {
+    if(!_playingAudio[entity][audio]) _playingAudio[entity][audio] = new AudioPool(_context);
+    _playingAudio[entity][audio]->addPlayingSound(_loadedAudio[audio], volume, looping);
 }
 
-void Audio::stopAudio(int parentId, AudioSound audio) {
-    if(_playingAudio[parentId][audio]) _playingAudio[parentId][audio]->stopSound();
+void Audio::stopAudio(entt::entity entity, AudioSound audio) {
+    if(_playingAudio[entity][audio]) _playingAudio[entity][audio]->stopSound();
 }
 
-void Audio::stopAllAudioById(int id) {
+void Audio::stopAllAudioById(entt::entity id) {
     for(auto it : _playingAudio[id]) {
         if(it.second) it.second->stopSound();
     }
@@ -62,7 +62,7 @@ void Audio::stopAllAudio() {
     }
 }
 
-bool Audio::isPlaying(int parentId, AudioSound soundName) {
-    if(_playingAudio[parentId][soundName]) return _playingAudio[parentId][soundName]->isPlaying();
+bool Audio::isPlaying(entt::entity entity, AudioSound soundName) {
+    if(_playingAudio[entity][soundName]) return _playingAudio[entity][soundName]->isPlaying();
     return false;
 }

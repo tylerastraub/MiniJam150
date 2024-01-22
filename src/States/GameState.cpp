@@ -19,9 +19,6 @@ std::mt19937 RandomGen::randEng{(unsigned int) std::chrono::system_clock::now().
 
 /**
  * @todo
- * ==== ESSENTIALS ====
- * - Add sounds
- * 
  * ==== NICE TO HAVES ====
  * - Add way to help tell where you are
  *     - Easiest: depth counter/coordinate system
@@ -66,7 +63,7 @@ void GameState::tick(float timescale) {
 
     _collisionSystem.checkForMiningCollisions(_ecs);
     _collisionSystem.checkForItemPickupCollisions(_ecs, timescale, getAudioPlayer());
-    _collisionSystem.checkForTorchAndBeaconCollisions(_ecs);
+    _collisionSystem.checkForTorchAndBeaconCollisions(_ecs, getAudioPlayer());
     _collisionSystem.checkForPlayerAndEnemyCollisions(_ecs, timescale, getAudioPlayer());
 
     _lightSystem.update(_ecs, _level);

@@ -150,6 +150,11 @@ bool Game::loadResources() {
     // Audio
     _audioPlayer = std::make_shared<Audio>();
     if(!_audioPlayer->addAudio(AudioSound::CHARACTER_BLIP, "res/audio/character_blip.wav")) return false;
+    if(!_audioPlayer->addAudio(AudioSound::JUMP, "res/audio/jump.wav")) return false;
+    if(!_audioPlayer->addAudio(AudioSound::MINING, "res/audio/mining.wav")) return false;
+    if(!_audioPlayer->addAudio(AudioSound::PLAYER_HURT, "res/audio/player_hurt.wav")) return false;
+    if(!_audioPlayer->addAudio(AudioSound::BEACON_LIT, "res/audio/beacon_lit.wav")) return false;
+    if(!_audioPlayer->addAudio(AudioSound::TORCH_LIT, "res/audio/torch_lit.wav")) return false;
 
     return true;
 }

@@ -8,7 +8,7 @@ void DialogueBox::tick(float timescale) {
     if(!_textIsFullyDisplayed) _timeActive += timescale * 1000.f;
     if(_numOfCharactersRendered != _text->getNumOfRenderedChars() && _text->getLastCharacter() != ' ') {
         _numOfCharactersRendered = _text->getNumOfRenderedChars();
-        _audio->playAudio(-1, AudioSound::CHARACTER_BLIP, 0.35f);
+        _audio->playAudio(entt::null, AudioSound::CHARACTER_BLIP, 0.35f);
     }
 }
 
