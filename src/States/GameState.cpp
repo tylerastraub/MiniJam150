@@ -20,18 +20,15 @@ std::mt19937 RandomGen::randEng{(unsigned int) std::chrono::system_clock::now().
 /**
  * @todo
  * ==== ESSENTIALS ====
- * - Create giant metroidvania style level but rocks/enemies are randomly generated
- *     - Light beacons/torches placed manually
- * - Add beacon progress notification
  * - Add sounds
  * 
  * ==== NICE TO HAVES ====
- * - Add basic enemies
- *     - Jumping enemy (frog?)
- *     - Mimic (fake rock enemy)
- * - Add text to LevelParser
+ * - Add way to help tell where you are
+ *     - Easiest: depth counter/coordinate system
+ *     - Medium: Add flags/checkpoints throughout cave
+ *     - Hard: Add live minimap
+ * - Add jumping enemy (frog?)
  * - Make enemies avoid light (so that torches have more reason to be lit up)
- * - Add controls indicator on screen (down arrow key appears when next to torch/beacon)
  * - Add rose quartz and emerald mineral
  * - Add wizard lab
  * - Add music
@@ -40,7 +37,7 @@ std::mt19937 RandomGen::randEng{(unsigned int) std::chrono::system_clock::now().
 */
 
 bool GameState::init() {
-    _level = LevelParser::parseLevelFromTmx(_ecs, "res/tiled/test_level.tmx", SpritesheetID::DEFAULT_TILESET);
+    _level = LevelParser::parseLevelFromTmx(_ecs, "res/tiled/main_level.tmx", SpritesheetID::DEFAULT_TILESET);
     _player = _level.getPlayerId();
     _lMap = std::make_shared<FloatingPointLightMap>();
     _lMap->allocate(_level.getTilemapWidth(), _level.getTilemapHeight());
@@ -82,6 +79,16 @@ void GameState::tick(float timescale) {
 
     respawnUpdate();
 
+    auto& playerComp = _ecs.get<PlayerComponent>(_player);
+    if(_beaconTextDisplayTimer < _beaconTextDisplayDuration && playerComp.beaconsLit < _level.getNumOfBeacons()) {
+        _beaconTextDisplayTimer += timescale * 1000.f;
+    }
+
+    if(playerComp.beaconRecentlyLit) {
+        playerComp.beaconRecentlyLit = false;
+        _beaconTextDisplayTimer = 0;
+    }
+
     // Input updates
     getKeyboard()->updateInputs();
     getController()->updateInputs();
@@ -112,6 +119,20 @@ void GameState::render() {
         int ySpritesheetIndex = (i < playerHealth) ? 1 : 0;
         heart->setTileIndex(0, ySpritesheetIndex);
         heart->render(getGameSize().x - (heart->getWidth() + 2) * (3 - i), 2, 16, 16);
+    }
+
+    // beacon progress text
+    if(_beaconTextDisplayTimer < _beaconTextDisplayDuration) {
+        std::shared_ptr<Text> smallText = getText(TextSize::SMALL);
+        auto numBeaconsLit = _ecs.get<PlayerComponent>(_player).beaconsLit;
+        if(numBeaconsLit == _level.getNumOfBeacons()) {
+            smallText->setString("All beacons lit! Congratulations.");
+        }
+        else {
+            smallText->setString(std::to_string(numBeaconsLit) + " out of " + std::to_string(_level.getNumOfBeacons()) + " beacons lit");
+        }
+        smallText->render(getGameSize().x / 2 - smallText->getWidth() / 2 + 1, getGameSize().y - smallText->getHeight() - 2, 0, 0, 0);
+        smallText->render(getGameSize().x / 2 - smallText->getWidth() / 2, getGameSize().y - smallText->getHeight() - 3);
     }
 
     // debug

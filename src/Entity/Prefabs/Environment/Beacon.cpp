@@ -63,7 +63,7 @@ namespace prefab {
         light.pos = strb::vec2f{render.renderQuad.x + render.renderQuad.w / 2, render.renderQuad.y + render.renderQuad.h / 2} / 16;
         light.brightness = 0.f;
         light.hue = HuePreset::brightWarm;
-        light.falloff = 0.04f;
+        light.falloff = 0.03f;
         light.owner = beacon;
         ecs.emplace<LightComponent>(beacon, LightComponent{light});
 

@@ -129,7 +129,7 @@ namespace prefab {
 
         RenderComponent render;
         render.renderQuad = {pos.x, pos.y, 24, 32};
-        render.renderPriority = 1;
+        render.renderPriority = 2;
         ecs.emplace<RenderComponent>(player, render);
 
         ecs.emplace<InputComponent>(player, InputComponent{{InputEvent::LEFT, InputEvent::RIGHT, InputEvent::DOWN, InputEvent::JUMP, InputEvent::ACTION}});

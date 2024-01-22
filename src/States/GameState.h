@@ -47,6 +47,9 @@ private:
     entt::entity _player;
     uint16_t _playerLight;
 
+    int _beaconTextDisplayTimer = 5000;
+    const int _beaconTextDisplayDuration = 5000;
+
     InputSystem _inputSystem;
     RenderSystem _renderSystem;
     PhysicsSystem _physicsSystem;

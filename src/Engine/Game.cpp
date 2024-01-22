@@ -94,7 +94,7 @@ bool Game::init() {
                         _currentState->setAudioPlayer(_audioPlayer);
                         _currentState->setSettings(_settings);
                         _currentState->init();
-                        // SDL_ShowCursor(SDL_DISABLE);
+                        SDL_ShowCursor(SDL_DISABLE);
                         windowCreatedSuccessfully = true;
                     }
                 }
@@ -179,7 +179,7 @@ void Game::startGameLoop() {
                     }
                 case SDL_KEYUP:
                     if(e.key.keysym.sym == SDLK_ESCAPE) {
-                        _exitFlag = true;
+                        // _exitFlag = true;
                     }
                     else {
                         _currentState->handleKeyboardInput(e);

@@ -111,7 +111,6 @@ bool FloatingPointLightMap::isLightInBounds(strb::vec2f pos) {
     return true;
 }
 
-// iterations are inconsistent - sometimes barely moving (but staying in the same tile) will have a different lightmap result
 void FloatingPointLightMap::updateLightMap(Light light) {
     strb::vec2f neighbors[8] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}, {1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
     // calculate directional light falloff so that moving lights appear smoother
@@ -169,7 +168,6 @@ void FloatingPointLightMap::addLightToLightMap(Light light) {
     // bounds check
     if(!isLightInBounds(light.pos)) return;
     auto& sources = _lightMap[light.pos.y][light.pos.x].lightSources;
-    auto idMatches = [](Light light1, Light light2) { return light1.id == light2.id; };
     if(light.brightness < 0.f) {
         for(auto it = sources.begin(); it != sources.end(); ++it) {
             if(it->id == light.id) {
@@ -198,23 +196,23 @@ void FloatingPointLightMap::addLightToLightMap(Light light) {
     updateHueInLightMap(light.pos);
 }
 
+// todo: change this to take Light as parameter, check for light ID, and remove
+// old/add new light to node's sources instead of recalculating entirely
 void FloatingPointLightMap::updateHueInLightMap(strb::vec2f pos) {
     LightMapNode& node = _lightMap[pos.y][pos.x];
     float red = 0;
     float green = 0;
     float blue = 0;
     float totalBrightness = 0.f;
-    std::vector<std::pair<float, Hue>> lights;
     for(auto light : node.lightSources) {
         if(light.id == SDL_MAX_UINT16) continue;
         totalBrightness += light.brightness;
-        lights.push_back({light.brightness, light.hue});
     }
-    for(auto light : lights) {
-        float weight = light.first / totalBrightness;
-        red += light.second.red * weight;
-        green += light.second.green * weight;
-        blue += light.second.blue * weight;
+    for(auto light : node.lightSources) {
+        float weight = light.brightness / totalBrightness;
+        red += light.hue.red * weight;
+        green += light.hue.green * weight;
+        blue += light.hue.blue * weight;
     }
     float max = (red > green) ? red : green;
     if(blue > max) max = blue;

@@ -221,6 +221,7 @@ void CollisionSystem::checkForTorchAndBeaconCollisions(entt::registry& ecs) {
                     inventory.inventory[ItemType::TOPAZ]--;
                     torchComp.isLit = true;
                     playerComp.beaconsLit++;
+                    playerComp.beaconRecentlyLit = true;
                     return;
                 }
                 else if(!torchComp.isBeacon && inventory.inventory[ItemType::COBALT] > 0) {
@@ -249,6 +250,7 @@ void CollisionSystem::checkForPlayerAndEnemyCollisions(entt::registry& ecs, floa
                 auto& physics = ecs.get<PhysicsComponent>(player);
                 float coefficient = (pPos.x - ePos.x < 0.f) ? -1.f : 1.f;
                 physics.velocity = {120.f * coefficient, -80.f};
+                return;
             }
         }
     }

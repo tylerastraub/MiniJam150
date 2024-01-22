@@ -65,6 +65,7 @@ namespace prefab {
 
         RenderComponent render;
         render.renderQuad = {pos.x, pos.y, 16, 16};
+        render.renderPriority = 1;
         ecs.emplace<RenderComponent>(mineral, render);
 
         ecs.emplace<ScriptComponent>(mineral, ScriptComponent{std::make_shared<MineralScript>()});
