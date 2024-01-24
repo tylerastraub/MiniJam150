@@ -9,6 +9,7 @@ build/*
 .VSCodeCounter/*
 cmake/*
 lib/*
+screenshots/*
 
 # Various files
 .DS_Store
